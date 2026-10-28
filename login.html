@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход — Улей</title>
+    <style>
+        :root {
+            --choco: #3e1e00; --cream: #fdf0d5; --honey: #e6a817;
+            --honey-light: #f7e1b5; --white: #fffcf7; --shadow: 0 8px 24px rgba(62, 30, 0, 0.10); --radius: 24px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            background: linear-gradient(160deg, var(--cream) 0%, #fff3e0 100%);
+            color: var(--choco); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 1rem;
+        }
+        body::before {
+            content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='52' viewBox='0 0 60 52' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolygon points='30,0 60,15 60,37 30,52 0,37 0,15' fill='none' stroke='%23e6a817' stroke-width='1' opacity='0.15'/%3E%3C/svg%3E");
+            background-size: 60px 52px; pointer-events: none;
+        }
+        .login-container {
+            background: var(--white); border-radius: var(--radius); padding: 2.5rem 2rem;
+            box-shadow: var(--shadow); max-width: 460px; width: 100%; text-align: center;
+            position: relative; z-index: 1; border: 1px solid var(--honey-light);
+        }
+        .bee-animation { font-size: 2.5rem; animation: fly 2s ease-in-out infinite; margin-bottom: 0.5rem; }
+        @keyframes fly { 0%, 100% { transform: translateY(0) rotate(0deg); } 25% { transform: translateY(-6px) rotate(-3deg); } 75% { transform: translateY(-6px) rotate(3deg); } }
+        .login-logo { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 0.5rem; }
+        .login-logo img { width: 48px; height: 48px; object-fit: contain; }
+        .login-logo span { font-size: 2rem; font-weight: 700; color: var(--choco); }
+        .login-subtitle { color: #7b624a; margin-bottom: 1.8rem; font-size: 1rem; font-style: italic; }
+
+        .form-group { margin-bottom: 1.2rem; text-align: left; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 0.3rem; font-size: 0.9rem; }
+        .form-group input, .form-group select {
+            width: 100%; padding: 0.8rem 1rem; border: 2px solid var(--honey-light); border-radius: 14px;
+            font-size: 1rem; font-family: inherit; background: var(--white); color: var(--choco);
+            transition: border-color 0.2s;
+        }
+        .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--honey); }
+
+        .consent-block {
+            background: #fff9f0; border: 1px solid var(--honey-light); border-radius: 14px;
+            padding: 1rem; margin: 1rem 0; font-size: 0.8rem; line-height: 1.5; text-align: left;
+        }
+        .consent-block label { display: flex; align-items: flex-start; gap: 0.6rem; cursor: pointer; }
+        .consent-block input[type="checkbox"] { margin-top: 0.2rem; width: 18px; height: 18px; accent-color: var(--honey); flex-shrink: 0; }
+        .consent-block a { color: var(--choco); font-weight: 600; }
+
+        .btn-login {
+            width: 100%; background: var(--honey); color: var(--white); border: none; padding: 0.9rem;
+            font-size: 1.1rem; font-weight: 700; border-radius: 30px; cursor: pointer; transition: all 0.2s;
+            font-family: inherit; margin-top: 0.5rem;
+        }
+        .btn-login:hover { background: #d49a0f; transform: translateY(-2px); box-shadow: 0 6px 16px rgba(230, 168, 23, 0.35); }
+        .btn-login:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+        .demo-hint { margin-top: 1.5rem; font-size: 0.75rem; color: #a08972; line-height: 1.5; }
+        .back-link { display: block; margin-top: 1rem; color: var(--choco); text-decoration: none; font-weight: 500; font-size: 0.9rem; }
+        .back-link:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="bee-animation">🐝</div>
+        <div class="login-logo"><img src="logoul.png" alt="Улей"><span>Улей</span></div>
+        <p class="login-subtitle">Войди в свой улей и продолжай строить проект</p>
+
+        <form id="loginForm" onsubmit="handleLogin(event)">
+            <div class="form-group">
+                <label for="username">Твоё имя</label>
+                <input type="text" id="username" placeholder="Например: Аня К." required autofocus>
+            </div>
+            <div class="form-group">
+                <label for="age">Твой возраст</label>
+                <select id="age" required>
+                    <option value="">— Выбери —</option>
+                    <option value="under14">Мне меньше 14 лет</option>
+                    <option value="14plus">Мне 14 лет или больше</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="role">Я —</label>
+                <select id="role">
+                    <option value="student">🐝 Ученик</option>
+                    <option value="mentor">🧑‍🏫 Наставник</option>
+                </select>
+            </div>
+
+            <div class="consent-block">
+                <label>
+                    <input type="checkbox" id="consentCheckbox" required>
+                    <span>
+                        Я даю <a href="privacy.html" target="_blank">согласие на обработку персональных данных</a> 
+                        в соответствии с Федеральным законом № 152-ФЗ. 
+                        <span id="parentalNote" style="display:none; color:#a0522d;">
+                            (Для пользователей младше 14 лет согласие даётся законным представителем.)
+                        </span>
+                    </span>
+                </label>
+            </div>
+
+            <button type="submit" class="btn-login" id="loginBtn" disabled>🍯 Войти в Улей</button>
+        </form>
+
+        <p class="demo-hint">
+            <strong>Демо-режим:</strong> пароль пока не требуется.<br>
+            Твои данные сохранятся только в этом браузере.
+        </p>
+
+        <a href="index.html" class="back-link">← Вернуться на главную</a>
+    </div>
+
+    <script>
+        const ageSelect = document.getElementById('age');
+        const parentalNote = document.getElementById('parentalNote');
+        const consentCheckbox = document.getElementById('consentCheckbox');
+        const loginBtn = document.getElementById('loginBtn');
+
+        ageSelect.addEventListener('change', function() {
+            if (this.value === 'under14') {
+                parentalNote.style.display = 'inline';
+            } else {
+                parentalNote.style.display = 'none';
+            }
+            validateForm();
+        });
+
+        consentCheckbox.addEventListener('change', validateForm);
+
+        function validateForm() {
+            const age = ageSelect.value;
+            const consent = consentCheckbox.checked;
+            loginBtn.disabled = !(age && consent);
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+
+            const username = document.getElementById('username').value.trim();
+            const age = document.getElementById('age').value;
+            const role = document.getElementById('role').value;
+
+            if (!username) { alert('Пожалуйста, введи имя'); return; }
+            if (!age) { alert('Пожалуйста, укажи возраст'); return; }
+            if (!consentCheckbox.checked) { alert('Необходимо согласие на обработку персональных данных'); return; }
+
+            const userData = {
+                name: username,
+                ageGroup: age,
+                role: role,
+                loginTime: new Date().toISOString(),
+                avatar: getAvatarForName(username),
+                consentGiven: true,
+                consentDate: new Date().toISOString()
+            };
+
+            localStorage.setItem('uliy_user', JSON.stringify(userData));
+
+            if (!localStorage.getItem('workshop_direction')) {
+                localStorage.setItem('workshop_direction', '');
+                localStorage.setItem('workshop_problem', '');
+                localStorage.setItem('workshop_topic', '');
+                localStorage.setItem('workshop_goal', '');
+                localStorage.setItem('workshop_hypothesis', '');
+                localStorage.setItem('workshop_stages', '');
+                localStorage.setItem('workshop_resources', '');
+            }
+
+            window.location.href = 'profile.html';
+        }
+
+        function getAvatarForName(name) {
+            const avatars = ['🐝', '🦊', '🐻', '🦉', '🐰', '🐼', '🦋', '🐞', '🐌', '🐙'];
+            let hash = 0;
+            for (let i = 0; i < name.length; i++) {
+                hash = name.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            return avatars[Math.abs(hash) % avatars.length];
+        }
+    </script>
+</body>
+</html>

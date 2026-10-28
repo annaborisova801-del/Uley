@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Наставники и Клуб — Улей</title>
+    <style>
+        :root {
+            --choco: #3e1e00; --cream: #fdf0d5; --honey: #e6a817; --honey-light: #f7e1b5;
+            --white: #fffcf7; --shadow: 0 8px 24px rgba(62, 30, 0, 0.10); --radius: 24px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Georgia', 'Times New Roman', serif; background-color: var(--cream);
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23e6a817' fill-opacity='0.06'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            color: var(--choco); line-height: 1.6; min-height: 100vh; display: flex; flex-direction: column;
+        }
+        .header {
+            background: var(--white); padding: 1rem 2.5rem; display: flex; align-items: center;
+            justify-content: space-between; box-shadow: 0 2px 12px rgba(62, 30, 0, 0.06);
+            position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--honey-light);
+        }
+        .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--choco); font-size: 1.8rem; font-weight: 700; }
+        .logo-img { width: 45px; height: 45px; object-fit: contain; }
+        .nav { display: flex; gap: 1.5rem; list-style: none; align-items: center; }
+        .nav a { text-decoration: none; color: var(--choco); font-weight: 500; padding: 0.4rem 0.8rem; border-radius: 20px; transition: background 0.2s; font-size: 0.95rem; }
+        .nav a:hover, .nav a.active { background: var(--honey-light); }
+
+        .breadcrumbs { padding: 1.5rem 2.5rem 0; font-size: 0.95rem; color: #7b624a; }
+        .breadcrumbs a { color: var(--choco); text-decoration: none; font-weight: 500; }
+
+        .page-header { text-align: center; padding: 2.5rem 2rem 1.5rem; }
+        .page-header h1 { font-size: 2.4rem; font-weight: 700; }
+        .page-header p { color: #7b624a; font-size: 1.1rem; max-width: 550px; margin: 0.5rem auto 0; font-style: italic; }
+
+        .container { max-width: 1000px; margin: 0 auto; padding: 0 2rem 3rem; flex: 1; }
+
+        .chat-banner {
+            background: linear-gradient(135deg, #e6a817, #d49a0f); color: var(--white);
+            border-radius: var(--radius); padding: 2.5rem; text-align: center; margin-bottom: 3rem;
+            box-shadow: 0 10px 30px rgba(230, 168, 23, 0.3);
+        }
+        .chat-banner h2 { font-size: 1.8rem; margin-bottom: 1rem; }
+        .chat-banner p { font-size: 1.05rem; margin-bottom: 1.5rem; opacity: 0.95; }
+        .btn-chat {
+            background: var(--white); color: var(--choco); padding: 0.8rem 2.5rem;
+            border-radius: 30px; text-decoration: none; font-weight: 700; font-size: 1.1rem;
+            display: inline-block; transition: transform 0.2s;
+        }
+        .btn-chat:hover { transform: translateY(-3px); }
+
+        .mentors-section { margin-bottom: 3rem; }
+        .mentors-section h2 { font-size: 1.8rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem; }
+        .mentors-grid { display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center; }
+        
+        .mentor-card {
+            background: var(--white); border-radius: var(--radius); padding: 2rem 1.5rem;
+            box-shadow: var(--shadow); text-align: center; flex: 1 1 220px; max-width: 250px;
+            border: 1px solid var(--honey-light); transition: transform 0.2s;
+        }
+        .mentor-card:hover { transform: translateY(-5px); }
+        .mentor-avatar {
+            width: 80px; height: 80px; border-radius: 50%; background: var(--cream);
+            margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center;
+            font-size: 2.5rem; border: 2px solid var(--honey-light);
+        }
+        .mentor-card .name { font-weight: 700; font-size: 1.1rem; }
+        .mentor-card .field { font-size: 0.85rem; color: #7b624a; margin-bottom: 1rem; }
+        .mentor-card .contact-info { font-size: 0.8rem; color: var(--choco); background: var(--cream); padding: 0.3rem; border-radius: 8px; margin-bottom: 1rem; }
+        .btn-contact {
+            background: var(--honey-light); color: var(--choco); border: none; padding: 0.5rem 1.5rem;
+            border-radius: 20px; font-weight: 600; font-size: 0.9rem; cursor: pointer;
+            font-family: inherit; transition: background 0.2s; text-decoration: none; display: inline-block;
+        }
+        .btn-contact:hover { background: var(--honey); color: var(--white); }
+
+        .faq-section { margin-bottom: 3rem; }
+        .faq-section h2 { font-size: 1.8rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem; }
+        .faq-item {
+            background: var(--white); border-radius: 16px; margin-bottom: 1rem;
+            box-shadow: 0 4px 12px rgba(62, 30, 0, 0.05); border: 1px solid var(--honey-light);
+            overflow: hidden;
+        }
+        .faq-question {
+            padding: 1.2rem 1.5rem; font-weight: 600; font-size: 1.05rem; cursor: pointer;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .faq-question:hover { background: #fff9f0; }
+        .faq-answer {
+            padding: 0 1.5rem; max-height: 0; overflow: hidden; transition: max-height 0.3s ease, padding 0.3s ease;
+            color: #5a4a3a; font-size: 0.95rem; line-height: 1.6;
+        }
+        .faq-item.open .faq-answer { max-height: 300px; padding: 0 1.5rem 1.5rem 1.5rem; }
+        .faq-item.open .faq-question { background: #fff9f0; }
+
+        .footer { background: var(--choco); color: var(--cream); text-align: center; padding: 1.5rem; margin-top: auto; font-size: 0.85rem; }
+        .footer a { color: var(--honey); text-decoration: underline; }
+
+        @media (max-width: 600px) {
+            .header { padding: 1rem; }
+            .nav { gap: 1rem; }
+            .container { padding: 0 1rem 2rem; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="index.html" class="logo"><img src="logoul.png" alt="Улей" class="logo-img">Улей</a>
+        <ul class="nav">
+            <li><a href="directions.html">Направления</a></li>
+            <li><a href="workshop.html">Мастерская</a></li>
+            <li><a href="library.html">Библиотека</a></li>
+            <li><a href="community.html" class="active">Наставники</a></li>
+            <li id="navLogin"><a href="login.html" style="font-weight:700; color:#d49a0f;">Войти</a></li>
+        </ul>
+    </header>
+
+    <div class="breadcrumbs"><a href="index.html">Главная</a> → Наставники и Клуб</div>
+
+    <div class="page-header">
+        <h1>🧑‍🏫 Наставники и Клуб</h1>
+        <p>Здесь ты можешь найти того, кто поможет с проектом, и задать любые вопросы</p>
+    </div>
+
+    <div class="container">
+        <div class="chat-banner">
+            <h2>💬 Главный чат Улья</h2>
+            <p>Хочешь найти команду, обсудить идею или просто поболтать с другими участниками? Заходи в наш Telegram-чат!</p>
+            <a href="https://t.me/utalents" target="_blank" class="btn-chat">Перейти в чат</a>
+        </div>
+
+        <div class="mentors-section">
+            <h2>👩‍🔬 Наши наставники</h2>
+            <div class="mentors-grid">
+                <div class="mentor-card">
+                    <div class="mentor-avatar">👩‍🔬</div>
+                    <div class="name">Елена Петровна</div>
+                    <div class="field">Генетика и биомедицина</div>
+                    <div class="contact-info">📧 elena@uliy.ru</div>
+                    <a href="mailto:elena@uliy.ru" class="btn-contact">Написать</a>
+                </div>
+                <div class="mentor-card">
+                    <div class="mentor-avatar">👨‍💻</div>
+                    <div class="name">Дмитрий Сергеевич</div>
+                    <div class="field">Искусственный интеллект</div>
+                    <div class="contact-info">📧 dmitry@uliy.ru</div>
+                    <a href="mailto:dmitry@uliy.ru" class="btn-contact">Написать</a>
+                </div>
+                <div class="mentor-card">
+                    <div class="mentor-avatar">👩‍🚀</div>
+                    <div class="name">Ольга Викторовна</div>
+                    <div class="field">Космические технологии</div>
+                    <div class="contact-info">📧 olga@uliy.ru</div>
+                    <a href="mailto:olga@uliy.ru" class="btn-contact">Написать</a>
+                </div>
+                <div class="mentor-card">
+                    <div class="mentor-avatar">👨‍🏭</div>
+                    <div class="name">Алексей Иванович</div>
+                    <div class="field">Производственные технологии</div>
+                    <div class="contact-info">📧 alexey@uliy.ru</div>
+                    <a href="mailto:alexey@uliy.ru" class="btn-contact">Написать</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="faq-section">
+            <h2>❓ Частые вопросы</h2>
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">Как найти себе команду для проекта?<span class="arrow">▼</span></div>
+                <div class="faq-answer">Лучший способ — написать в наш Telegram-чат (кнопка выше). Опиши свою идею, направление и кого ищешь. Также можно спросить у классного руководителя или учителя информатики — часто они знают, кто из ребят тоже хочет делать проект.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">Можно ли делать проект одному?<span class="arrow">▼</span></div>
+                <div class="faq-answer">Да, можно! Многие проекты на «Больших вызовах» делаются в одиночку. Главное — правильно распределить время и четко следовать плану из Мастерской.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">Что делать, если я не понимаю, о чем писать в теоретической части?<span class="arrow">▼</span></div>
+                <div class="faq-answer">Загляни в Библиотеку Улья — там есть урок «Как читать научную статью». Если совсем сложно, напиши научному руководителю или одному из наставников на этой странице. Они помогут подобрать литературу.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">Обязательно ли участвовать в конкурсе, или можно делать проект для себя?<span class="arrow">▼</span></div>
+                <div class="faq-answer">Конечно, можно делать проект для себя! Но участие в конкурсах (например, «Большие вызовы») дает крутой опыт защиты, обратную связь от экспертов и шанс попасть на очную программу в «Сириус».</div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>🍯 Улей — помогаем строить проекты · <a href="https://t.me/utalents" target="_blank">Telegram-чат</a> · <a href="privacy.html">Политика конфиденциальности</a></p>
+    </footer>
+
+    <script>
+        (function() {
+            const user = JSON.parse(localStorage.getItem('uliy_user') || 'null');
+            const nav = document.querySelector('.nav');
+            if (!nav) return;
+            const loginBtn = document.getElementById('navLogin');
+            if (user) {
+                if (loginBtn) loginBtn.style.display = 'none';
+                const userLi = document.createElement('li');
+                userLi.innerHTML = `<a href="profile.html" style="display:flex;align-items:center;gap:8px;background:var(--honey-light);padding:0.4rem 1rem;border-radius:25px;font-weight:600;font-size:0.95rem;color:var(--choco);"><span>${user.avatar || '🐝'}</span> ${user.name || 'Пчеловод'}</a>`;
+                nav.appendChild(userLi);
+                const logoutLi = document.createElement('li');
+                logoutLi.innerHTML = `<a href="#" onclick="logout()" style="color:#a0522d;">Выйти</a>`;
+                nav.appendChild(logoutLi);
+            }
+        })();
+        function logout() {
+            if (confirm('Выйти из профиля?')) {
+                localStorage.removeItem('uliy_user');
+                window.location.href = 'index.html';
+            }
+        }
+        function toggleFaq(element) {
+            const item = element.parentElement;
+            const isOpen = item.classList.contains('open');
+            document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+            if (!isOpen) item.classList.add('open');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Направления — Улей</title>
+    <style>
+        :root {
+            --choco: #3e1e00;
+            --cream: #fdf0d5;
+            --honey: #e6a817;
+            --honey-light: #f7e1b5;
+            --white: #fffcf7;
+            --shadow: 0 8px 24px rgba(62, 30, 0, 0.10);
+            --radius: 24px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            background-color: var(--cream);
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23e6a817' fill-opacity='0.06'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            color: var(--choco);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .header {
+            background: var(--white); padding: 1rem 2.5rem; display: flex; align-items: center;
+            justify-content: space-between; box-shadow: 0 2px 12px rgba(62, 30, 0, 0.06);
+            position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--honey-light);
+        }
+        .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--choco); font-size: 1.8rem; font-weight: 700; }
+        .logo-img { width: 45px; height: 45px; object-fit: contain; }
+        .nav { display: flex; gap: 1.5rem; list-style: none; align-items: center; }
+        .nav a { text-decoration: none; color: var(--choco); font-weight: 500; padding: 0.4rem 0.8rem; border-radius: 20px; transition: background 0.2s; font-size: 0.95rem; }
+        .nav a:hover, .nav a.active { background: var(--honey-light); }
+
+        .breadcrumbs { padding: 1.5rem 2.5rem 0; font-size: 0.95rem; color: #7b624a; }
+        .breadcrumbs a { color: var(--choco); text-decoration: none; font-weight: 500; }
+
+        .page-header { text-align: center; padding: 2rem 2rem 1.5rem; }
+        .page-header h1 { font-size: 2.4rem; font-weight: 700; color: var(--choco); margin-bottom: 0.5rem; }
+        .page-header p { color: #7b624a; font-size: 1.1rem; font-style: italic; }
+
+        .direction-nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem; padding: 0 2rem 2rem; }
+        .direction-nav a { background: var(--white); color: var(--choco); text-decoration: none; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.82rem; font-weight: 500; transition: all 0.2s; border: 1px solid var(--honey-light); }
+        .direction-nav a:hover { background: var(--honey); color: var(--white); border-color: var(--honey); }
+
+        .container { max-width: 900px; margin: 0 auto; padding: 0 2rem 3rem; flex: 1; }
+        .direction-card {
+            background: var(--white); border-radius: var(--radius); padding: 2rem; margin-bottom: 2rem;
+            box-shadow: var(--shadow); border-left: 6px solid var(--honey); scroll-margin-top: 100px;
+        }
+        .direction-card h2 { font-size: 1.6rem; margin-bottom: 0.5rem; color: var(--choco); }
+        .direction-card .summary { color: #6b4e33; margin-bottom: 1.5rem; font-style: italic; line-height: 1.6; }
+
+        .roadmap { background: var(--cream); border-radius: 16px; padding: 1.5rem; margin: 1.5rem 0; }
+        .roadmap h3 { font-size: 1.2rem; margin-bottom: 1rem; color: var(--choco); }
+        .roadmap-item { display: flex; gap: 1rem; margin-bottom: 1rem; align-items: baseline; }
+        .roadmap-year { background: var(--honey); color: var(--white); font-weight: 700; padding: 0.2rem 0.7rem; border-radius: 12px; font-size: 0.85rem; min-width: 70px; text-align: center; flex-shrink: 0; }
+        .roadmap-text { font-size: 0.95rem; }
+
+        .tasks { margin: 1.5rem 0; }
+        .tasks h3 { font-size: 1.2rem; margin-bottom: 1rem; color: var(--choco); }
+        .task-item {
+            background: var(--cream); border-radius: 12px; padding: 1rem 1.2rem; margin-bottom: 0.8rem;
+            display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;
+            border: 1px solid var(--honey-light);
+        }
+        .task-item .task-text { font-size: 0.95rem; flex: 1; }
+        .task-item .task-difficulty { font-size: 0.75rem; background: var(--white); padding: 0.2rem 0.6rem; border-radius: 10px; font-weight: 600; color: #7b624a; border: 1px solid var(--honey-light); }
+        .btn-take { background: var(--honey); color: var(--white); border: none; padding: 0.5rem 1.2rem; border-radius: 20px; font-weight: 600; cursor: pointer; font-size: 0.85rem; transition: background 0.2s; text-decoration: none; font-family: inherit; }
+        .btn-take:hover { background: #d49a0f; }
+
+        .back-to-top { text-align: center; margin: 2rem 0; }
+        .back-to-top a { color: var(--choco); text-decoration: none; font-weight: 600; background: var(--white); padding: 0.6rem 1.5rem; border-radius: 20px; box-shadow: var(--shadow); transition: background 0.2s; border: 1px solid var(--honey-light); }
+        .back-to-top a:hover { background: var(--honey-light); }
+
+        .footer { background: var(--choco); color: var(--cream); text-align: center; padding: 1.5rem; margin-top: auto; font-size: 0.85rem; }
+        .footer a { color: var(--honey); text-decoration: underline; }
+
+        @media (max-width: 600px) {
+            .header { padding: 1rem; }
+            .nav { gap: 1rem; }
+            .container { padding: 0 1rem 2rem; }
+            .direction-card { padding: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="index.html" class="logo"><img src="logoul.png" alt="Улей" class="logo-img">Улей</a>
+        <ul class="nav">
+            <li><a href="directions.html" class="active">Направления</a></li>
+            <li><a href="workshop.html">Мастерская</a></li>
+            <li><a href="library.html">Библиотека</a></li>
+            <li><a href="community.html">Наставники</a></li>
+            <li id="navLogin"><a href="login.html" style="font-weight:700; color:#d49a0f;">Войти</a></li>
+        </ul>
+    </header>
+
+    <div class="breadcrumbs"><a href="index.html">Главная</a> → Направления</div>
+
+    <div class="page-header">
+        <h1>🍯 Соты знаний</h1>
+        <p>Выбери направление, чтобы увидеть научные прогнозы и актуальные задачи для проекта</p>
+    </div>
+
+    <div class="direction-nav">
+        <a href="#genetics">Генетика и биомедицина</a>
+        <a href="#ai">Большие данные и ИИ</a>
+        <a href="#space">Космические технологии</a>
+        <a href="#materials">Новые материалы</a>
+        <a href="#ecology">Экология и климат</a>
+        <a href="#energy">Современная энергетика</a>
+        <a href="#agro">Агро и биотехнологии</a>
+        <a href="#cognitive">Когнитивные исследования</a>
+        <a href="#math">Производственные технологии</a>
+        <a href="#robotics">Транспорт и беспилотники</a>
+        <a href="#bioinformatics">Нейротехнологии</a>
+    </div>
+
+    <div class="container">
+        <!-- 1 -->
+        <div class="direction-card" id="genetics">
+            <h2>🧬 Генетика и биомедицина</h2>
+            <p class="summary">Персонализированная медицина, генетическая диагностика, тканевая инженерия и биоинформатика. На «Больших вызовах» школьники разрабатывают клеточные тест-системы, занимаются биофабрикацией и анализом биологической активности антител.</p>
+            <div class="roadmap">
+                <h3>📅 Дорожная карта: прогнозы до 2050 года</h3>
+                <div class="roadmap-item"><span class="roadmap-year">2025-2030</span><div><p class="roadmap-text">Развитие массовых ДНК-тестирований, платформ с ИИ, персональных медицинских помощников. Федеральная программа развития генетических технологий.</p></div></div>
+                <div class="roadmap-item"><span class="roadmap-year">2030-2035</span><div><p class="roadmap-text">Таргетная генная терапия, биопечать, клеточные технологии и новые медицинские материалы. Формирование открытой экосистемы персонализированной медицины.</p></div></div>
+                <div class="roadmap-item"><span class="roadmap-year">2035-2050</span><div><p class="roadmap-text">Биоинженерия, AR/VR-технологии для медицины, геномика и фармакогеномика. Массовое применение генетических технологий.</p></div></div>
+            </div>
+            <div class="tasks">
+                <h3>🎯 Актуальные задачи для проекта</h3>
+                <div class="task-item"><span class="task-text">Фиджитал-здравоохранение (интерактивный трекер для пациентов с предрасположенностью к диабету)</span><span class="task-difficulty">Простой уровень</span><a href="workshop.html" class="btn-take">Взять в работу</a></div>
+                <div class="task-item"><span class="task-text">Секвенирование генома для диагностики редких заболеваний</span><span class="task-difficulty">Средний уровень</span><a href="workshop.html" class="btn-take">Взять в работу</a></div>
+                <div class="task-item"><span class="task-text">Разработка устройства для мониторинга здоровья</span><span class="task-difficulty">Средний уровень</span><a href="workshop.html" class="btn-take">Взять в работу</a></div>
+                <div class="task-item"><span class="task-text">Программа для расчёта полигенного показателя риска развития сложного заболевания</span><span class="task-difficulty">Средний уровень</span><a href="workshop.html" class="btn-take">Взять в работу</a></div>
+                <div class="task-item"><span class="task-text">Моделирование и оценка антибиотикорезистентности (математический способ)</span><span class="task-difficulty">Средний уровень</span><a href="workshop.html" class="btn-take">Взять в работу</a></div>
+                <div class="task-item"><span class="task-text">Моделирование и оценка антибиотикорезистентности (молекулярный уровень)</span><span class="task-difficulty">Сложный уровень</span><a href="workshop.html" class="btn-take">Взять в работу</a></div>
+                <div class="task-item"><span class="task-text">Развитие пангеномных графов и референса Т2Т</span><span class="task-difficulty">Сложный уровень</span><a href="workshop.html" class="btn-take">Взять в работу</a></div>
+            </div>
+        </div>
+        <!-- 2 -->
+        <div class="direction-card" id="ai">
+            <h2>🤖 Большие данные, ИИ, автоматизированные системы и информационная безопасность</h2>
+            <p class="summary">Искусственный интеллект, большие языковые модели, компьютерное зрение, робототехника и кибербезопасность. На «Больших вызовах» школьники создают агентные системы, ассистенты на основе LLM, бионические протезы и системы навигации роботов.</p>
+            <div class="roadmap">
+                <h3>📅 Дорожная карта: прогнозы до 2050 года</h3>
+                <div class="roadmap-item"><span class="roadmap-year">2025-2030</span><div><p class="roadmap-text">Беспроводная связь (4G-5G), хранение и анализ больших данных, геоинформационные системы, искусственный интеллект, цифровые двойники.</p></div></div>
+                <div class="roadmap-item"><span class="roadmap-year">2030-2035</span><div><p class="roadmap-text">Сильный ИИ, AR/VR. Массовое внедрение ИИ во все отрасли экономики. Развитие «интернета вещей» и киберфизических систем.</p></div></div>
+                <div class="roadmap-item"><span class="roadmap-year">2035-2050</span><div><p class="roadmap-text">Квантовые коммуникации, перспективные системы связи (лазерные и др.). Глубокая интеграция ИИ в повседневную жизнь, автономные агенты.</p></div></div>
+            </div>
+            <div class="tasks">
+                <h3>🎯 Актуальные задачи</h3>
+                <div class="task-item"><span class="task-text">Классификатор изображений на Python (кошки vs собаки)</span><span class="task-difficulty">Простой</span><a href="workshop.html" class="btn-take">Взять в работу</a></div>
+                <div class="task-item"><span class="task-text">Простой чат-бот на основе API LLM</span><span class="task-difficulty">Простой</span><a href="workshop.html" class="btn-take">Взять в работу</a></div>
+                <div class="task-item"><span class="task-text">Система компьютерного зрения для распознавания объектов</span><span class="task-difficulty">Средний</span><a href="workshop.html" class="btn-take">Взять в работу</a></div>
+                <div class="task-item"><span class="task-text">Система навигации робота к объектам</span><span class="task-difficulty">Средний</span><a href="workshop.html" class="btn-take">Взять в работу</a></div>
+                <div class="task-item"><span class="task-text">Бионический протез кисти (макет с управлением)</span><span class="task-difficulty">Сложный</span><a href="workshop.html" class="btn-take">Взять в работу</a></div>
+                <div class="task-item"><span class="task-text">Цифровой тифлокомментатор: ИИ-ассистент для описания видео</span><span class="task-difficulty">Сложный</span><a href="workshop.html" class="btn-take">Взять в работу</a></div>
+            </div>
+        </div>
+        <!-- 3 -->
+        <div class="direction-card" id="space">
+            <h2>🚀 Космические технологии</h2>
+            <p class="summary">Ракеты, спутники, орбитальные станции, лунные базы и мониторинг Земли из космоса. На «Больших вызовах» школьники создают робототехнические комплексы для лунной базы, системы планирования радиолокационной съёмки и системы мониторинга разливов нефти по спутниковым снимкам.</p>
+            <div class="roadmap">
+                <h3>📅 Дорожная карта: прогнозы до 2050 года</h3>
+                <div class="roadmap-item"><span class="roadmap-year">2025-2030</span><div><p class="roadmap-text">Развитие многоразовых ракет, расширение группировки малых спутников. Развитие лунных миссий, робототехники и систем ДЗЗ.</p></div></div>
+                <div class="roadmap-item"><span class="roadmap-year">2030-2035</span><div><p class="roadmap-text">Создание лунной базы, развитие робототехнических комплексов для освоения Луны. Развитие ядерных энергосистем для космических миссий.</p></div></div>
+                <div class="roadmap-item"><span class="roadmap-year">2035-2050</span><div><p class="roadmap-text">Промышленное освоение космоса: добыча ресурсов на Луне и астероидах, постоянные обитаемые базы. Развитие ядерных буксиров.</p></div></div>
+            </div>
+            <div class="tasks">
+                <h3>🎯 Актуальные задачи</h3>
+                <div class="task-item"><span class="task-text">Модель солнечной системы с расчётом орбит</span><span class="task-difficulty">Простой</span><a href="workshop.html" class="btn-take">Взять в работу</a></div>
+                <div class="task-item"><span class="task-text">Анализ спутниковых снимков (открытые данные Sentinel)</span><span class="task-difficulty">Простой</span><a href="workshop.html" class="btn-take">Взять в работу</a></div>
+                <div class="task-item"><span class="task-text">Модель ракеты с расчётом траектории полёта</span><span class="task-difficulty">Средний</span><a href="workshop.html" class="btn-take">Взять в работу</a></div>
+                <div class="task-item"><span class="task-text">Алгоритм обнаружения объектов на спутниковых снимках</span><span class="task-difficulty">Средний</span><a href="workshop.html" class="btn-take">Взять в работу</a></div>
+                <div class="task-item"><span class="task-text">Робототехнический комплекс для лунной базы (макет)</span><span class="task-difficulty">Сложный</span><a href="workshop.html" class="btn-take">Взять в работу</a></div>
+            </div>
+        </div>
+        <!-- 4 -->
+        <div class="direction-card" id="materials">
+            <h2>🔬 Новые материалы, нанотехнологии и микроэлектроника</h2>
+            <p class="summary">Композиты, полимеры, наноструктуры, пьезоэлектрики и полупроводники — основа технологического суверенитета. На «Больших вызовах» школьники создают бактерицидные маски с серебряными нанопроволоками, разрабатывают электропроводящие композиты и антикоррозионные покрытия.</p>
+            <div class="roadmap">
+                <h3>📅 Дорожная карта: прогнозы до 2050 года</h3>
+                <div class="roadmap-item"><span class="roadmap-year">2025-2030</span><div><p class="roadmap-text">Развитие производства композитов для космоса, робототехники и атомной промышленности, переработка редкоземельных металлов.</p></div></div>
+                <div class="roadmap-item"><span class="roadmap-year">2030-2035</span><div><p class="roadmap-text">Массовое внедрение функциональных материалов нового поколения: самоочищающиеся покрытия, «умные» материалы с сенсорами, гибкая электроника.</p></div></div>
+                <div class="roadmap-item"><span class="roadmap-year">2035-2050</span><div><p class="roadmap-text">Переход к материалам с программируемыми свойствами: 4D-печать, биоинтегрируемые материалы, квантовые материалы.</p></div></div>
+            </div>
+            <div class="tasks">
+                <h3>🎯 Актуальные задачи</h3>
+                <div class="task-item"><span class="task-text">Исследование свойств простых полимеров (эластичность резины при разной температуре)</span><span class="task-difficulty">Простой</span><a href="workshop.html" class="btn-take">Взять в работу</a></div>
+                <div class="task-item"><span class="task-text">Сравнение антикоррозионных свойств разных покрытий</span><span class="task-difficulty">Простой</span><a href="workshop.html" class="btn-take">Взять в работу</a></div>
+                <div class="task-item"><span class="task-text">Модель кристаллической решётки и расчёт свойств материала</span><span class="task-difficulty">Средний</span><a href="workshop.html" class="btn-take">Взять в работу</a></div>
+                <div class="task-item"><span class="task-text">Моделирование наноструктуры и предсказание свойств (in silico)</span><span class="task-difficulty">Сложный</span><a href="workshop.html" class="btn-take">Взять в работу</a></div>
+                <div class="task-item"><span class="task-text">Создание простого пьезоэлектрического сенсора</span><span class="task-difficulty">Сложный</span><a href="workshop.html" class="btn-take">Взять в работу</a></div>
+            </div>
+        </div>
+        <!-- 5 -->
+        <div class="direction-card" id="ecology">
+            <h2>🌍 Экология и изучение изменений климата</h2>
+            <p class="summary">Мониторинг качества воды и воздуха, эмиссия парниковых газов, ГИС-технологии и циркулярная экономика. На «Больших вызовах» школьники исследуют выбросы углерода почвами, мониторят экологическое состояние городов и моделируют наводнения с использованием ГИС.</p>
+            <div class="roadmap">
+                <h3>📅 Дорожная карта: прогнозы до 2050 года</h3>
+                <div class="roadmap-item"><span class="roadmap-year">2025-2030</span><div><p class="roadmap-text">Развитие систем экологического мониторинга с использованием IoT-датчиков и спутниковых данных. Внедрение цифровых платформ для контроля качества окружающей среды.</p></div></div>
+                <div class="roadmap-item"><span class="roadmap-year">2030-2035</span><div><p class="roadmap-text">Массовое внедрение систем предиктивного моделирования климатических рисков. Развитие технологий мониторинга и верификации выбросов парниковых газов.</p></div></div>
+                <div class="roadmap-item"><span class="roadmap-year">2035-2050</span><div><p class="roadmap-text">Глубокая декарбонизация экономики: переход к возобновляемой энергетике, развитие технологий улавливания и хранения углерода (CCUS).</p></div></div>
+            </div>
+            <div class="tasks">
+                <h3>🎯 Актуальные задачи</h3>
+                <div class="task-item"><span class="task-text">Мониторинг качества воды в местном водоёме (простые тесты)</span><span class="task-difficulty">Простой</span><a href="workshop.html" class="btn-take">Взять в работу</a></div>
+                <div class="task-item"><span class="task-text">Подсчёт углеродного следа школы или семьи</span><span class="task-difficulty">Простой</span><a href="workshop.html" class="btn-take">Взять в работу</a></div>
+                <div class="task-item"><span class="task-text">Мониторинг качества воздуха с помощью Arduino-датчиков</span><span class="task-difficulty">Средний</span><a href="workshop.html" class="btn-take">Взять в работу</a></div>
+                <div class="task-item"><span class="task-text">Оценка рисков наводнений с использованием ГИС</span><span class="task-difficulty">Средний</span><a href="workshop.html" class="btn-take">Взять в работу</a></div>
+                <div class="task-item"><span class="task-text">Модель эмиссии CO2 почвами (на основе открытых данных)</span><span class="task-difficulty">Сложный</span><a href="workshop.html" class="btn-take">Взять в работу</a></div>
+            </div>
+        </div>
+        <!-- 6 -->
+        <div class="direction-card" id="energy">
+            <h2>⚡ Современная энергетика</h2>
+            <p class="summary">«Интернет энергии», интеллектуальные сети, распределённая генерация, накопители и водородная энергетика. На «Больших вызовах» школьники работают над управлением энергетическими ресурсами с применением машинного обучения и симметрированием электрических нагрузок.</p>
+            <div class="roadmap">
+                <h3>📅 Дорожная карта: прогнозы до 2050 года</h3>
+                <div class="roadmap-item"><span class="roadmap-year">2025-2030</span><div><p class="roadmap-text">Цифровизация энергетики: массовое внедрение интеллектуальных счётчиков, цифровых подстанций, систем предиктивной аналитики.</p></div></div>
+                <div class="roadmap-item"><span class="roadmap-year">2030-2035</span><div><p class="roadmap-text">Переход к самоорганизующейся интеллектуальной энергетике: системы управления, обучающиеся на опыте и взаимодействующие с человеком.</p></div></div>
+                <div class="roadmap-item"><span class="roadmap-year">2035-2050</span><div><p class="roadmap-text">Глубокая декарбонизация энергетики: рост доли низкоуглеродных источников, развитие водородной энергетики, ядерных технологий нового поколения.</p></div></div>
+            </div>
+            <div class="tasks">
+                <h3>🎯 Актуальные задачи</h3>
+                <div class="task-item"><span class="task-text">Анализ потребления электроэнергии дома или в школе с помощью Python</span><span class="task-difficulty">Простой</span><a href="workshop.html" class="btn-take">Взять в работу</a></div>
+                <div class="task-item"><span class="task-text">Модель ветрогенератора из подручных материалов</span><span class="task-difficulty">Простой</span><a href="workshop.html" class="btn-take">Взять в работу</a></div>
+                <div class="task-item"><span class="task-text">Предиктивная модель энергопотребления здания на основе исторических данных</span><span class="task-difficulty">Средний</span><a href="workshop.html" class="btn-take">Взять в работу</a></div>
+                <div class="task-item"><span class="task-text">Система мониторинга напряжения в домашней сети на Arduino</span><span class="task-difficulty">Средний</span><a href="workshop.html" class="btn-take">Взять в работу</a></div>
+                <div class="task-item"><span class="task-text">Симуляция микросети с возобновляемыми источниками и накопителем</span><span class="task-difficulty">Сложный</span><a href="workshop.html" class="btn-take">Взять в работу</a></div>
+            </div>
+        </div>
+        <!-- 7 -->
+        <div class="direction-card" id="agro">
+            <h2>🌾 Агропромышленные и биотехнологии</h2>
+            <p class="summary">«Агропищевая индустрия 4.0»: умное сельское хозяйство, биологизация, альтернативные источники пищи и персонализированное питание. На «Больших вызовах» школьники разрабатывают тест-системы для определения вирусов, анализируют почвенные бактерии и занимаются иммуногенетикой злаковых культур.</p>
+            <div class="roadmap">
+                <h3>📅 Дорожная карта: прогнозы до 2050 года</h3>
+                <div class="roadmap-item"><span class="roadmap-year">2025-2030</span><div><p class="roadmap-text">Развитие «агропищевой индустрии 4.0»: цифровизация сельского хозяйства, дроны для мониторинга посевов, точное земледелие.</p></div></div>
+                <div class="roadmap-item"><span class="roadmap-year">2030-2035</span><div><p class="roadmap-text">Формирование глобально конкурентоспособной российской «агропищевой индустрии 4.0»: новые логистические решения, кастомизация продуктов, роботизация.</p></div></div>
+                <div class="roadmap-item"><span class="roadmap-year">2035-2050</span><div><p class="roadmap-text">Переход к персонализированному питанию на основе генетических данных. Альтернативные источники белка. Автономные роботизированные фермы.</p></div></div>
+            </div>
+            <div class="tasks">
+                <h3>🎯 Актуальные задачи</h3>
+                <div class="task-item"><span class="task-text">Исследование влияния разных почв на рост растений</span><span class="task-difficulty">Простой</span><a href="workshop.html" class="btn-take">Взять в работу</a></div>
+                <div class="task-item"><span class="task-text">Простой биосенсор на основе растений (датчик загрязнения воды по росту корней)</span><span class="task-difficulty">Простой</span><a href="workshop.html" class="btn-take">Взять в работу</a></div>
+                <div class="task-item"><span class="task-text">Анализ микробиома почвы (простая микроскопия)</span><span class="task-difficulty">Средний</span><a href="workshop.html" class="btn-take">Взять в работу</a></div>
+                <div class="task-item"><span class="task-text">Модель точного земледелия с использованием открытых данных</span><span class="task-difficulty">Средний</span><a href="workshop.html" class="btn-take">Взять в работу</a></div>
+                <div class="task-item"><span class="task-text">ML-модель прогноза урожайности на основе климатических данных</span><span class="task-difficulty">Сложный</span><a href="workshop.html" class="btn-take">Взять в работу</a></div>
+            </div>
+        </div>
+        <!-- 8 -->
+        <div class="direction-card" id="cognitive">
+            <h2>🧠 Когнитивные и междисциплинарные исследования</h2>
+            <p class="summary">Наука о том, как работает мозг, мышление, язык, восприятие и сознание. На «Больших вызовах» школьники изучают влияние музыки на когнитивные процессы, исследуют движения глаз при стрессе и создают системы распознавания эмоций.</p>
+            <div class="roadmap">
+                <h3>📅 Дорожная карта: прогнозы до 2050 года</h3>
+                <div class="roadmap-item"><span class="roadmap-year">2025-2030</span><div><p class="roadmap-text">Массовое применение ИИ в когнитивных исследованиях: анализ движений глаз, распознавание эмоций, языковые модели. Рост доступных нейроинтерфейсов (ЭЭГ-гарнитуры).</p></div></div>
+                <div class="roadmap-item"><span class="roadmap-year">2030-2035</span><div><p class="roadmap-text">Появление технологий расширения когнитивных способностей человека — гибридный интеллект. Внедрение системы интеграции человека с виртуальной средой.</p></div></div>
+                <div class="roadmap-item"><span class="roadmap-year">2035-2050</span><div><p class="roadmap-text">Глубокая интеграция искусственного и естественного интеллекта: интерфейсы «мозг-компьютер» для массового потребителя, искусственные органы чувств.</p></div></div>
+            </div>
+            <div class="tasks">
+                <h3>🎯 Актуальные задачи</h3>
+                <div class="task-item"><span class="task-text">Исследование влияния музыки на концентрацию (анкетирование + тест Струпа)</span><span class="task-difficulty">Простой</span><a href="workshop.html" class="btn-take">Взять в работу</a></div>
+                <div class="task-item"><span class="task-text">Анализ движений глаз при чтении (простой eye-tracking на веб-камере)</span><span class="task-difficulty">Простой</span><a href="workshop.html" class="btn-take">Взять в работу</a></div>
+                <div class="task-item"><span class="task-text">Распознавание эмоций по выражению лица с помощью ИИ</span><span class="task-difficulty">Средний</span><a href="workshop.html" class="btn-take">Взять в работу</a></div>
+                <div class="task-item"><span class="task-text">Исследование влияния стресса на параметры чтения (анкеты + эксперимент)</span><span class="task-difficulty">Средний</span><a href="workshop.html" class="btn-take">Взять в работу</a></div>
+                <div class="task-item"><span class="task-text">Система компьютерного зрения для анализа поведения (FaceScope-подобная)</span><span class="task-difficulty">Сложный</span><a href="workshop.html" class="btn-take">Взять в работу</a></div>
+            </div>
+        </div>
+        <!-- 9 -->
+        <div class="direction-card" id="math">
+            <h2>🏭 Передовые производственные технологии</h2>
+            <p class="summary">Переход от традиционных заводов к «Фабрикам будущего»: киберфизические системы, цифровые двойники, роботизация и аддитивное производство. На «Больших вызовах» школьники создают системы предиктивного анализа, приложения для раскроя листового материала и цифровые двойники аппаратов.</p>
+            <div class="roadmap">
+                <h3>📅 Дорожная карта: прогнозы до 2050 года</h3>
+                <div class="roadmap-item"><span class="roadmap-year">2025-2030</span><div><p class="roadmap-text">Массовое внедрение цифровых двойников и предиктивной аналитики на производстве. Рост автоматизации и роботизации. Развитие аддитивных технологий.</p></div></div>
+                <div class="roadmap-item"><span class="roadmap-year">2030-2035</span><div><p class="roadmap-text">Переход к полностью цифровым фабрикам: объединение материального и виртуального миров, «умные данные», мультидисциплинарная оптимизация.</p></div></div>
+                <div class="roadmap-item"><span class="roadmap-year">2035-2050</span><div><p class="roadmap-text">Конвергенция ИИ, продвинутой робототехники, квантовых вычислений и аддитивного производства. Автономное производство с минимальным участием человека.</p></div></div>
+            </div>
+            <div class="tasks">
+                <h3>🎯 Актуальные задачи</h3>
+                <div class="task-item"><span class="task-text">3D-модель производственного процесса в Blender или Tinkercad</span><span class="task-difficulty">Простой</span><a href="workshop.html" class="btn-take">Взять в работу</a></div>
+                <div class="task-item"><span class="task-text">Алгоритм раскроя листового материала (простой)</span><span class="task-difficulty">Простой</span><a href="workshop.html" class="btn-take">Взять в работу</a></div>
+                <div class="task-item"><span class="task-text">Цифровой двойник простого устройства (например, насоса)</span><span class="task-difficulty">Средний</span><a href="workshop.html" class="btn-take">Взять в работу</a></div>
+                <div class="task-item"><span class="task-text">Система предиктивного анализа для школьного оборудования</span><span class="task-difficulty">Средний</span><a href="workshop.html" class="btn-take">Взять в работу</a></div>
+                <div class="task-item"><span class="task-text">Роботизированная система сортировки деталей на базе Arduino</span><span class="task-difficulty">Сложный</span><a href="workshop.html" class="btn-take">Взять в работу</a></div>
+            </div>
+        </div>
+        <!-- 10 -->
+        <div class="direction-card" id="robotics">
+            <h2>🚢 Транспортно-логистические системы, морские, авиационные и беспилотные технологии</h2>
+            <p class="summary">Беспилотные авиационные и наземные системы, логистика, навигация и авиационные технологии. На «Больших вызовах» школьники разрабатывают беспилотные системы для подземных горных работ, автоматизируют проектирование логистических объектов и применяют ИИ в навигации дронов.</p>
+            <div class="roadmap">
+                <h3>📅 Дорожная карта: прогнозы до 2050 года</h3>
+                <div class="roadmap-item"><span class="roadmap-year">2025-2030</span><div><p class="roadmap-text">Массовое внедрение беспилотных авиационных систем для мониторинга, доставки и инспекции. Развитие электрического и беспилотного транспорта.</p></div></div>
+                <div class="roadmap-item"><span class="roadmap-year">2030-2035</span><div><p class="roadmap-text">К 2035 году над территорией РФ могут постоянно находиться в воздухе не менее 100 тыс. беспилотных воздушных судов, объединённых в единую систему.</p></div></div>
+                <div class="roadmap-item"><span class="roadmap-year">2035-2050</span><div><p class="roadmap-text">Регулярные грузовые перевозки беспилотными системами. Полностью автономные транспортные системы. Интеграция воздушных, наземных и морских беспилотных систем.</p></div></div>
+            </div>
+            <div class="tasks">
+                <h3>🎯 Актуальные задачи</h3>
+                <div class="task-item"><span class="task-text">Модель маршрута доставки с оптимизацией (задача коммивояжёра)</span><span class="task-difficulty">Простой</span><a href="workshop.html" class="btn-take">Взять в работу</a></div>
+                <div class="task-item"><span class="task-text">Симуляция движения беспилотника по заданному маршруту</span><span class="task-difficulty">Простой</span><a href="workshop.html" class="btn-take">Взять в работу</a></div>
+                <div class="task-item"><span class="task-text">Алгоритм кооперативной навигации для двух роботов</span><span class="task-difficulty">Средний</span><a href="workshop.html" class="btn-take">Взять в работу</a></div>
+                <div class="task-item"><span class="task-text">Система распознавания объектов для дрона (компьютерное зрение)</span><span class="task-difficulty">Средний</span><a href="workshop.html" class="btn-take">Взять в работу</a></div>
+                <div class="task-item"><span class="task-text">Беспилотная авиационная система для мониторинга (макет)</span><span class="task-difficulty">Сложный</span><a href="workshop.html" class="btn-take">Взять в работу</a></div>
+            </div>
+        </div>
+        <!-- 11 -->
+        <div class="direction-card" id="bioinformatics">
+            <h2>🧬 Природоподобные и нейротехнологии</h2>
+            <p class="summary">Технологии, воспроизводящие системы и процессы живой природы: биомимикрия, нейроинтерфейсы, искусственные органы чувств и биосовместимые материалы. На «Больших вызовах» школьники исследуют тонкие плёнки функциональных материалов, разрабатывают полимерные аэрогели для восстановления спинного мозга и изучают психофизиологию управления луноходом.</p>
+            <div class="roadmap">
+                <h3>📅 Дорожная карта: прогнозы до 2050 года</h3>
+                <div class="roadmap-item"><span class="roadmap-year">2025-2030</span><div><p class="roadmap-text">Развитие доступных нейроинтерфейсов (ЭЭГ-гарнитуры). Появление технологий гибридного интеллекта в образовании. Биосовместимые материалы для медицины.</p></div></div>
+                <div class="roadmap-item"><span class="roadmap-year">2030-2035</span><div><p class="roadmap-text">Появление технологий расширения когнитивных способностей человека, генной и клеточной коррекции заболеваний нервной системы, искусственных органов чувств, антропоморфных конечностей.</p></div></div>
+                <div class="roadmap-item"><span class="roadmap-year">2035-2050</span><div><p class="roadmap-text">Массовое нейроуправление бытовым пространством. Глубокая интеграция человека и технологий: нейрокомпьютерные интерфейсы для повседневного использования.</p></div></div>
+            </div>
+            <div class="tasks">
+                <h3>🎯 Актуальные задачи</h3>
+                <div class="task-item"><span class="task-text">Биомимикрия: изучение природных структур (например, лист лотоса) и их применение</span><span class="task-difficulty">Простой</span><a href="workshop.html" class="btn-take">Взять в работу</a></div>
+                <div class="task-item"><span class="task-text">Модель нервной системы простого организма</span><span class="task-difficulty">Простой</span><a href="workshop.html" class="btn-take">Взять в работу</a></div>
+                <div class="task-item"><span class="task-text">Простой нейроинтерфейс на основе ЭЭГ-гарнитуры (если доступна)</span><span class="task-difficulty">Средний</span><a href="workshop.html" class="btn-take">Взять в работу</a></div>
+                <div class="task-item"><span class="task-text">Модель биоценоза: симуляция взаимодействия микроорганизмов и растений</span><span class="task-difficulty">Средний</span><a href="workshop.html" class="btn-take">Взять в работу</a></div>
+                <div class="task-item"><span class="task-text">Система управления устройством силой мысли (через ЭЭГ или eye-tracking)</span><span class="task-difficulty">Сложный</span><a href="workshop.html" class="btn-take">Взять в работу</a></div>
+            </div>
+        </div>
+
+        <div class="back-to-top"><a href="#">⬆ Наверх, к навигации</a></div>
+    </div>
+
+    <footer class="footer">
+        <p>🍯 Улей — помогаем строить проекты · <a href="https://t.me/utalents" target="_blank">Telegram-чат</a> · <a href="privacy.html">Политика конфиденциальности</a></p>
+    </footer>
+
+    <script>
+        (function() {
+            const user = JSON.parse(localStorage.getItem('uliy_user') || 'null');
+            const nav = document.querySelector('.nav');
+            if (!nav) return;
+            const loginBtn = document.getElementById('navLogin');
+            if (user) {
+                if (loginBtn) loginBtn.style.display = 'none';
+                const userLi = document.createElement('li');
+                userLi.innerHTML = `<a href="profile.html" style="display:flex;align-items:center;gap:8px;background:var(--honey-light);padding:0.4rem 1rem;border-radius:25px;font-weight:600;font-size:0.95rem;color:var(--choco);"><span>${user.avatar || '🐝'}</span> ${user.name || 'Пчеловод'}</a>`;
+                nav.appendChild(userLi);
+                const logoutLi = document.createElement('li');
+                logoutLi.innerHTML = `<a href="#" onclick="logout()" style="color:#a0522d;">Выйти</a>`;
+                nav.appendChild(logoutLi);
+            }
+        })();
+        function logout() {
+            if (confirm('Выйти из профиля?')) {
+                localStorage.removeItem('uliy_user');
+                window.location.href = 'index.html';
+            }
+        }
+    </script>
+</body>
+</html>

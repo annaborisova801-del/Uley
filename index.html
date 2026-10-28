@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Улей — создай проект для Больших вызовов</title>
+    <style>
+        :root {
+            --choco: #3e1e00;
+            --cream: #fdf0d5;
+            --honey: #e6a817;
+            --honey-light: #f7e1b5;
+            --white: #fffcf7;
+            --shadow: 0 8px 24px rgba(62, 30, 0, 0.10);
+            --radius: 24px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            background-color: var(--cream);
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23e6a817' fill-opacity='0.06'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            color: var(--choco);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .header {
+            background: var(--white); padding: 1rem 2.5rem; display: flex; align-items: center;
+            justify-content: space-between; box-shadow: 0 2px 12px rgba(62, 30, 0, 0.06);
+            position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--honey-light);
+        }
+        .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--choco); font-size: 1.8rem; font-weight: 700; letter-spacing: -0.5px; }
+        .logo-img { width: 45px; height: 45px; object-fit: contain; }
+        .nav { display: flex; gap: 1.5rem; list-style: none; align-items: center; }
+        .nav a { text-decoration: none; color: var(--choco); font-weight: 500; padding: 0.4rem 0.8rem; border-radius: 20px; transition: background 0.2s; font-size: 0.95rem; }
+        .nav a:hover { background: var(--honey-light); }
+
+        .hero { text-align: center; padding: 4rem 2rem 2rem; background: transparent; }
+        .hero h1 { font-size: 2.8rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--choco); letter-spacing: -1px; }
+        .hero .subtitle { font-size: 1.2rem; color: #6b4e33; max-width: 580px; margin: 0 auto 2rem; font-style: italic; }
+
+        .btn-primary {
+            background: var(--honey); color: var(--white); border: none; padding: 1rem 2.8rem;
+            font-size: 1.1rem; font-weight: 600; border-radius: 40px; cursor: pointer;
+            text-decoration: none; display: inline-block; box-shadow: 0 6px 16px rgba(230, 168, 23, 0.35);
+            transition: all 0.2s; margin-bottom: 2rem; font-family: inherit;
+        }
+        .btn-primary:hover { background: #d49a0f; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(230, 168, 23, 0.45); }
+
+        .quick-links { display: flex; justify-content: center; flex-wrap: wrap; gap: 1.5rem; margin-top: 1.5rem; }
+        .quick-card {
+            background: var(--white); border-radius: var(--radius); padding: 1.8rem 1.5rem; width: 200px;
+            box-shadow: var(--shadow); transition: transform 0.25s, box-shadow 0.25s; text-decoration: none;
+            color: var(--choco); display: flex; flex-direction: column; align-items: center; text-align: center;
+            border: 1px solid var(--honey-light);
+        }
+        .quick-card:hover { transform: translateY(-5px); box-shadow: 0 16px 32px rgba(62, 30, 0, 0.15); }
+        .quick-card .icon { font-size: 2.6rem; margin-bottom: 0.6rem; }
+        .quick-card h3 { font-size: 1.15rem; margin-bottom: 0.3rem; }
+        .quick-card p { font-size: 0.85rem; color: #7b624a; }
+
+        .directions { padding: 3rem 1rem; text-align: center; overflow-x: auto; }
+        .directions h2 { font-size: 2rem; margin-bottom: 2rem; color: var(--choco); }
+        
+        .hex-grid { display: flex; flex-direction: column; align-items: center; gap: 0.3rem; min-width: 900px; padding: 0 1rem; }
+        .hex-row { display: flex; justify-content: center; gap: 0.5rem; margin-bottom: -1.5rem; }
+        .hex-row:nth-child(even) { margin-left: 7rem; }
+
+        .hex {
+            width: 170px; height: 196px; clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            background: var(--white); display: flex; align-items: center; justify-content: center; text-align: center;
+            font-weight: 600; font-size: 0.72rem; color: var(--choco); text-decoration: none; transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(62, 30, 0, 0.08); border: 1px solid var(--honey-light);
+            padding: 1.5rem 0.8rem; line-height: 1.35; background: linear-gradient(145deg, #fffcf7, #fdf0d5);
+            word-break: break-word; hyphens: auto;
+        }
+        .hex:hover { background: var(--honey); color: var(--white); border-color: var(--honey); transform: scale(1.05); box-shadow: 0 8px 24px rgba(230, 168, 23, 0.3); }
+
+        .directions-note { margin-top: 2.5rem; color: #7b624a; font-style: italic; }
+
+        .footer { background: var(--choco); color: var(--cream); text-align: center; padding: 1.5rem; margin-top: auto; font-size: 0.85rem; }
+        .footer a { color: var(--honey); text-decoration: underline; }
+
+        @media (max-width: 950px) {
+            .hex { width: 140px; height: 161px; font-size: 0.65rem; }
+            .hex-row:nth-child(even) { margin-left: 5.5rem; }
+            .hex-grid { min-width: 750px; }
+        }
+        @media (max-width: 750px) {
+            .hex { width: 110px; height: 127px; font-size: 0.55rem; padding: 1rem 0.4rem; }
+            .hex-row:nth-child(even) { margin-left: 4rem; }
+            .hex-grid { min-width: 600px; }
+            .quick-links { flex-direction: column; align-items: center; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="index.html" class="logo"><img src="logoul.png" alt="Улей" class="logo-img">Улей</a>
+        <ul class="nav">
+            <li><a href="directions.html">Направления</a></li>
+            <li><a href="workshop.html">Мастерская</a></li>
+            <li><a href="library.html">Библиотека</a></li>
+            <li><a href="community.html">Наставники</a></li>
+            <li id="navLogin"><a href="login.html" style="font-weight:700; color:#d49a0f;">Войти</a></li>
+        </ul>
+    </header>
+
+    <main>
+        <section class="hero">
+            <h1>Твой проект для Больших вызовов</h1>
+            <p class="subtitle">Собери нектар знаний, построй свою соту и подари миру новое открытие — «Улей» проведёт тебя от идеи до готового проекта.</p>
+            <a href="workshop.html" class="btn-primary">🛠️ Начать проект</a>
+
+            <div class="quick-links">
+                <a href="directions.html" class="quick-card">
+                    <span class="icon">🧭</span>
+                    <h3>Куда лететь?</h3>
+                    <p>Гид по всем направлениям</p>
+                </a>
+                <a href="workshop.html" class="quick-card">
+                    <span class="icon">📋</span>
+                    <h3>Собрать проект</h3>
+                    <p>Паспорт, презентация, постер</p>
+                </a>
+                <a href="library.html" class="quick-card">
+                    <span class="icon">📚</span>
+                    <h3>Библиотека</h3>
+                    <p>Научные статьи и прогнозы</p>
+                </a>
+                <a href="community.html" class="quick-card">
+                    <span class="icon">🧑‍🏫</span>
+                    <h3>Наставники</h3>
+                    <p>Найти помощь и чат</p>
+                </a>
+            </div>
+        </section>
+
+        <section class="directions">
+            <h2>Соты знаний</h2>
+            <div class="hex-grid">
+                <div class="hex-row">
+                    <a href="directions.html#genetics" class="hex">Генетика и биомедицина</a>
+                    <a href="directions.html#ai" class="hex">Большие данные, ИИ, автоматизированные системы и информбезопасность</a>
+                    <a href="directions.html#space" class="hex">Космические технологии</a>
+                    <a href="directions.html#materials" class="hex">Новые материалы, нанотехнологии и микроэлектроника</a>
+                </div>
+                <div class="hex-row">
+                    <a href="directions.html#ecology" class="hex">Экология и изучение изменений климата</a>
+                    <a href="directions.html#energy" class="hex">Современная энергетика</a>
+                    <a href="directions.html#agro" class="hex">Агропромышленные и биотехнологии</a>
+                </div>
+                <div class="hex-row">
+                    <a href="directions.html#cognitive" class="hex">Когнитивные и междисциплинарные исследования</a>
+                    <a href="directions.html#math" class="hex">Передовые производственные технологии</a>
+                    <a href="directions.html#robotics" class="hex">Транспортно-логистические системы, морские, авиационные и беспилотные технологии</a>
+                    <a href="directions.html#bioinformatics" class="hex">Природоподобные и нейротехнологии</a>
+                </div>
+            </div>
+            <p class="directions-note">Нажми на соту — узнаешь главные научные прогнозы на 50 лет и актуальные задачи.</p>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>🍯 Улей — помогаем строить проекты · <a href="https://t.me/utalents" target="_blank">Telegram-чат</a> · <a href="privacy.html">Политика конфиденциальности</a></p>
+    </footer>
+
+    <script>
+        (function() {
+            const user = JSON.parse(localStorage.getItem('uliy_user') || 'null');
+            const nav = document.querySelector('.nav');
+            if (!nav) return;
+            const loginBtn = document.getElementById('navLogin');
+            if (user) {
+                if (loginBtn) loginBtn.style.display = 'none';
+                const userLi = document.createElement('li');
+                userLi.innerHTML = `<a href="profile.html" style="display:flex;align-items:center;gap:8px;background:var(--honey-light);padding:0.4rem 1rem;border-radius:25px;font-weight:600;font-size:0.95rem;color:var(--choco);"><span>${user.avatar || '🐝'}</span> ${user.name || 'Пчеловод'}</a>`;
+                nav.appendChild(userLi);
+                const logoutLi = document.createElement('li');
+                logoutLi.innerHTML = `<a href="#" onclick="logout()" style="color:#a0522d;">Выйти</a>`;
+                nav.appendChild(logoutLi);
+            }
+        })();
+        function logout() {
+            if (confirm('Выйти из профиля?')) {
+                localStorage.removeItem('uliy_user');
+                window.location.href = 'index.html';
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Политика конфиденциальности — Улей</title>
+    <style>
+        :root {
+            --choco: #3e1e00; --cream: #fdf0d5; --honey: #e6a817; --honey-light: #f7e1b5;
+            --white: #fffcf7; --shadow: 0 8px 24px rgba(62, 30, 0, 0.10); --radius: 24px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Georgia', 'Times New Roman', serif; background-color: var(--cream);
+            color: var(--choco); line-height: 1.7; min-height: 100vh; display: flex; flex-direction: column;
+        }
+        .header {
+            background: var(--white); padding: 1rem 2.5rem; display: flex; align-items: center;
+            justify-content: space-between; box-shadow: 0 2px 12px rgba(62, 30, 0, 0.06);
+            border-bottom: 1px solid var(--honey-light);
+        }
+        .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--choco); font-size: 1.8rem; font-weight: 700; }
+        .logo-img { width: 45px; height: 45px; object-fit: contain; }
+        .nav { display: flex; gap: 1.5rem; list-style: none; align-items: center; }
+        .nav a { text-decoration: none; color: var(--choco); font-weight: 500; padding: 0.4rem 0.8rem; border-radius: 20px; transition: background 0.2s; font-size: 0.95rem; }
+        .nav a:hover { background: var(--honey-light); }
+
+        .container { max-width: 800px; margin: 2rem auto; padding: 0 2rem; flex: 1; }
+        h1 { font-size: 1.8rem; margin-bottom: 1.5rem; }
+        h2 { font-size: 1.3rem; margin: 1.5rem 0 0.8rem; }
+        p, li { font-size: 0.95rem; margin-bottom: 0.8rem; }
+        ul { padding-left: 1.5rem; }
+        .footer { background: var(--choco); color: var(--cream); text-align: center; padding: 1.5rem; margin-top: auto; font-size: 0.85rem; }
+        .footer a { color: var(--honey); text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="index.html" class="logo"><img src="logoul.png" alt="Улей" class="logo-img">Улей</a>
+        <ul class="nav">
+            <li><a href="directions.html">Направления</a></li>
+            <li><a href="workshop.html">Мастерская</a></li>
+            <li><a href="library.html">Библиотека</a></li>
+            <li><a href="community.html">Наставники</a></li>
+        </ul>
+    </header>
+
+    <div class="container">
+        <h1>Политика конфиденциальности</h1>
+        <p>Настоящая Политика определяет порядок обработки и защиты персональных данных пользователей сайта «Улей» (далее — Сайт) в соответствии с Федеральным законом от 27.07.2006 № 152-ФЗ «О персональных данных».</p>
+
+        <h2>1. Какие данные мы собираем</h2>
+        <ul>
+            <li>Имя (или псевдоним), указанное пользователем.</li>
+            <li>Возрастная группа (младше / старше 14 лет).</li>
+            <li>Роль (ученик / наставник).</li>
+            <li>Данные, вводимые в Мастерской проекта (текст проекта).</li>
+        </ul>
+        <p>Данные хранятся локально в браузере пользователя (localStorage) и не передаются на сервер.</p>
+
+        <h2>2. Согласие на обработку</h2>
+        <p>При регистрации пользователь даёт конкретное, предметное и информированное согласие на обработку персональных данных. Для пользователей младше 14 лет согласие должно быть дано законным представителем (родителем или опекуном).</p>
+
+        <h2>3. Цели обработки</h2>
+        <p>Данные используются исключительно для функционирования личного кабинета и Мастерской проекта. Мы не передаём данные третьим лицам.</p>
+
+        <h2>4. Права пользователя</h2>
+        <p>Пользователь вправе в любой момент удалить свои данные, очистив localStorage браузера или воспользовавшись кнопкой «Выйти» в личном кабинете.</p>
+
+        <h2>5. Контакты</h2>
+        <p>По вопросам обработки персональных данных обращайтесь к администрации Сайта.</p>
+    </div>
+
+    <footer class="footer">
+        <p>🍯 Улей — помогаем строить проекты · <a href="https://t.me/utalents" target="_blank">Telegram-чат</a> · <a href="privacy.html">Политика конфиденциальности</a></p>
+    </footer>
+</body>
+</html>

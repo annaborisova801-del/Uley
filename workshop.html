@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мастерская проекта — Улей</title>
+    <style>
+        :root {
+            --choco: #3e1e00; --cream: #fdf0d5; --honey: #e6a817;
+            --honey-light: #f7e1b5; --white: #fffcf7; --shadow: 0 8px 24px rgba(62, 30, 0, 0.10); --radius: 24px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Georgia', 'Times New Roman', serif; background-color: var(--cream);
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23e6a817' fill-opacity='0.06'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            color: var(--choco); line-height: 1.6; min-height: 100vh; display: flex; flex-direction: column;
+        }
+        .header {
+            background: var(--white); padding: 1rem 2.5rem; display: flex; align-items: center;
+            justify-content: space-between; box-shadow: 0 2px 12px rgba(62, 30, 0, 0.06);
+            position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--honey-light);
+        }
+        .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--choco); font-size: 1.8rem; font-weight: 700; }
+        .logo-img { width: 45px; height: 45px; object-fit: contain; }
+        .nav { display: flex; gap: 1.5rem; list-style: none; align-items: center; }
+        .nav a { text-decoration: none; color: var(--choco); font-weight: 500; padding: 0.4rem 0.8rem; border-radius: 20px; transition: background 0.2s; font-size: 0.95rem; }
+        .nav a:hover, .nav a.active { background: var(--honey-light); }
+
+        .breadcrumbs { padding: 1.5rem 2.5rem 0; font-size: 0.95rem; color: #7b624a; }
+        .breadcrumbs a { color: var(--choco); text-decoration: none; font-weight: 500; }
+
+        .workshop-layout { display: flex; gap: 2rem; max-width: 1100px; margin: 2rem auto; padding: 0 2rem; flex: 1; align-items: flex-start; }
+        
+        .sidebar {
+            background: var(--white); border-radius: var(--radius); padding: 1.5rem; box-shadow: var(--shadow);
+            position: sticky; top: 100px; min-width: 220px; text-align: center; border: 1px solid var(--honey-light);
+        }
+        .sidebar h3 { font-size: 1rem; margin-bottom: 1.2rem; color: var(--choco); }
+        .progress-steps { list-style: none; display: flex; flex-direction: column; gap: 0.8rem; }
+        .progress-steps li { display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: #b8a08a; transition: color 0.3s; text-align: left; cursor: pointer; }
+        .progress-steps li.done { color: var(--choco); font-weight: 600; }
+        .progress-steps li.active { color: var(--choco); font-weight: 700; }
+        .step-dot { width: 12px; height: 12px; border-radius: 50%; background: #e0d0c0; flex-shrink: 0; margin-top: 4px; }
+        .progress-steps li.done .step-dot { background: var(--honey); }
+        .progress-steps li.active .step-dot { background: var(--honey); box-shadow: 0 0 0 4px var(--honey-light); }
+
+        .form-container { flex: 1; background: var(--white); border-radius: var(--radius); padding: 2.5rem; box-shadow: var(--shadow); border: 1px solid var(--honey-light); }
+        .form-container h1 { font-size: 1.8rem; margin-bottom: 0.3rem; }
+        .form-container .subtitle { color: #7b624a; margin-bottom: 2rem; font-style: italic; font-size: 0.95rem; }
+
+        .step-panel { display: none; }
+        .step-panel.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .step-panel h2 { font-size: 1.3rem; margin-bottom: 1.2rem; display: flex; align-items: center; gap: 0.5rem; border-bottom: 2px dashed var(--honey-light); padding-bottom: 0.5rem; }
+
+        .form-group { margin-bottom: 1.2rem; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 0.4rem; font-size: 0.95rem; }
+        .form-group input, .form-group textarea {
+            width: 100%; padding: 0.8rem 1rem; border: 2px solid var(--honey-light); border-radius: 12px;
+            font-size: 0.95rem; font-family: inherit; background: var(--white); color: var(--choco);
+            transition: border-color 0.2s; resize: vertical;
+        }
+        .form-group input:focus, .form-group textarea:focus { outline: none; border-color: var(--honey); }
+        .form-group textarea { min-height: 80px; }
+        .form-group .hint { font-size: 0.8rem; color: #8b6b4f; margin-top: 0.3rem; display: block; }
+
+        .row { display: flex; gap: 1rem; flex-wrap: wrap; }
+        .col { flex: 1; min-width: 200px; }
+
+        .btn-row { display: flex; gap: 1rem; margin-top: 2rem; flex-wrap: wrap; justify-content: space-between; }
+        .btn { padding: 0.8rem 2rem; border-radius: 30px; font-weight: 600; font-size: 1rem; cursor: pointer; border: none; transition: all 0.2s; font-family: inherit; }
+        .btn-primary { background: var(--honey); color: var(--white); }
+        .btn-primary:hover { background: #d49a0f; transform: translateY(-2px); }
+        .btn-outline { background: transparent; color: var(--choco); border: 2px solid var(--honey); }
+        .btn-outline:hover { background: var(--honey-light); }
+        .btn-success { background: #8bc34a; color: white; font-size: 1.1rem; padding: 1rem 2.5rem; box-shadow: 0 4px 15px rgba(139, 195, 74, 0.4); }
+        .btn-success:hover { background: #7cb342; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(139, 195, 74, 0.5); }
+
+        .footer { background: var(--choco); color: var(--cream); text-align: center; padding: 1.5rem; margin-top: auto; font-size: 0.85rem; }
+        .footer a { color: var(--honey); text-decoration: underline; }
+
+        @media (max-width: 800px) {
+            .workshop-layout { flex-direction: column; padding: 0 1rem; }
+            .sidebar { position: static; width: 100%; display: flex; flex-direction: column; align-items: center; }
+            .progress-steps { flex-direction: row; flex-wrap: wrap; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="index.html" class="logo"><img src="logoul.png" alt="Улей" class="logo-img">Улей</a>
+        <ul class="nav">
+            <li><a href="directions.html">Направления</a></li>
+            <li><a href="workshop.html" class="active">Мастерская</a></li>
+            <li><a href="library.html">Библиотека</a></li>
+            <li><a href="community.html">Наставники</a></li>
+            <li id="navLogin"><a href="login.html" style="font-weight:700; color:#d49a0f;">Войти</a></li>
+        </ul>
+    </header>
+
+    <div class="breadcrumbs"><a href="index.html">Главная</a> → Мастерская проекта</div>
+
+    <div class="workshop-layout">
+        <aside class="sidebar">
+            <h3>🍯 Твой прогресс</h3>
+            <ul class="progress-steps" id="progressList">
+                <li class="active" data-step="1" onclick="showStep(1)"><span class="step-dot"></span> Титульный лист</li>
+                <li data-step="2" onclick="showStep(2)"><span class="step-dot"></span> Введение</li>
+                <li data-step="3" onclick="showStep(3)"><span class="step-dot"></span> Глава I</li>
+                <li data-step="4" onclick="showStep(4)"><span class="step-dot"></span> Главы II и III</li>
+                <li data-step="5" onclick="showStep(5)"><span class="step-dot"></span> Итоги и Экспорт</li>
+            </ul>
+        </aside>
+
+        <div class="form-container">
+            <h1>🛠️ Мастерская проекта</h1>
+            <p class="subtitle">Заполни данные, и мы соберем их в готовый документ Word (.doc)</p>
+
+            <!-- ШАГ 1 -->
+            <div class="step-panel active" id="step1">
+                <h2>📄 Шаг 1. Титульный лист</h2>
+                <div class="row">
+                    <div class="form-group col">
+                        <label for="direction">Направление конкурса</label>
+                        <select id="direction">
+                            <option value="">— Выбери направление —</option>
+                            <option>Генетика и биомедицина</option>
+                            <option>Современная энергетика</option>
+                            <option>Большие данные и ИИ</option>
+                            <option>Космические технологии</option>
+                            <option>Новые материалы и микроэлектроника</option>
+                            <option>Экология и климат</option>
+                            <option>Агропромышленные и биотехнологии</option>
+                            <option>Когнитивные исследования</option>
+                            <option>Производственные технологии</option>
+                            <option>Транспорт и беспилотники</option>
+                            <option>Нейротехнологии</option>
+                        </select>
+                    </div>
+                    <div class="form-group col">
+                        <label for="topic">Название проекта</label>
+                        <input type="text" id="topic" placeholder="Например: Изучение влияния БОС-тренингов">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col">
+                        <label for="fio">ФИО автора</label>
+                        <input type="text" id="fio" placeholder="Иванова Мария Сергеевна">
+                    </div>
+                    <div class="form-group col">
+                        <label for="classSchool">Класс и учебное заведение</label>
+                        <input type="text" id="classSchool" placeholder="ученица 10 класса «Лицей №116»">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col">
+                        <label for="supervisor">Научные руководители</label>
+                        <input type="text" id="supervisor" placeholder="студент 3-го курса ИФМиБ КФУ, Набиуллин А.Д.">
+                    </div>
+                    <div class="form-group col">
+                        <label for="cityYear">Город, год</label>
+                        <input type="text" id="cityYear" placeholder="Казань, 2025">
+                    </div>
+                </div>
+                <div class="btn-row" style="justify-content: flex-end;">
+                    <button class="btn btn-primary" onclick="nextStep(2)">Далее →</button>
+                </div>
+            </div>
+
+            <!-- ШАГ 2 -->
+            <div class="step-panel" id="step2">
+                <h2>📝 Шаг 2. Введение</h2>
+                <div class="form-group"><label for="problem">Актуальность проблемы</label><textarea id="problem"></textarea></div>
+                <div class="form-group"><label for="goal">Цель работы</label><textarea id="goal"></textarea></div>
+                <div class="form-group"><label for="tasks">Задачи (каждую с новой строки)</label><textarea id="tasks" placeholder="1. Проведение тестирования.&#10;2. Обработка данных."></textarea></div>
+                <div class="form-group"><label for="hypothesis">Гипотеза</label><textarea id="hypothesis"></textarea></div>
+                <div class="btn-row">
+                    <button class="btn btn-outline" onclick="prevStep(1)">← Назад</button>
+                    <button class="btn btn-primary" onclick="nextStep(3)">Далее →</button>
+                </div>
+            </div>
+
+            <!-- ШАГ 3 -->
+            <div class="step-panel" id="step3">
+                <h2>🔬 Шаг 3. ГЛАВА I. Теоретическая часть</h2>
+                <div class="form-group"><label for="t11">1.1 Целевая аудитория</label><textarea id="t11"></textarea></div>
+                <div class="form-group"><label for="t12">1.2 Необходимый функционал</label><textarea id="t12"></textarea></div>
+                <div class="form-group"><label for="t13">1.3 Анализ существующих исследований</label><textarea id="t13"></textarea></div>
+                <div class="form-group"><label for="t14">1.4 План реализации исследования</label><textarea id="t14"></textarea></div>
+                <div class="form-group"><label for="t15">1.5 Используемые ресурсы</label><textarea id="t15"></textarea></div>
+                <div class="form-group"><label for="t16">1.6 Название вашего проекта</label><textarea id="t16" placeholder="Оставьте пустым для автозаполнения"></textarea></div>
+                <div class="form-group"><label for="t17">1.7 Возможные аналоги</label><textarea id="t17"></textarea></div>
+                <div class="form-group"><label for="t18">1.8 Сравнительная таблица аналогов</label><textarea id="t18"></textarea></div>
+                <div class="form-group"><label for="t19">1.9 Возможные партнёры</label><textarea id="t19"></textarea></div>
+                <div class="form-group"><label for="t110">1.10 MVP (Название вашего проекта)</label><textarea id="t110"></textarea></div>
+                <div class="btn-row">
+                    <button class="btn btn-outline" onclick="prevStep(2)">← Назад</button>
+                    <button class="btn btn-primary" onclick="nextStep(4)">Далее →</button>
+                </div>
+            </div>
+
+            <!-- ШАГ 4 -->
+            <div class="step-panel" id="step4">
+                <h2>📊 Шаг 4. Главы II и III</h2>
+                <div class="form-group"><label for="t21">ГЛАВА II. 2.1 Методика проведения исследования</label><textarea id="t21"></textarea></div>
+                <div class="form-group"><label for="t22">2.2 Статистическая обработка данных</label><textarea id="t22"></textarea></div>
+                <div class="form-group"><label for="t31">ГЛАВА III. 3.1 Результаты исследования</label><textarea id="t31"></textarea></div>
+                <div class="form-group"><label for="t32">3.2 Сравнение полученных результатов</label><textarea id="t32"></textarea></div>
+                <div class="btn-row">
+                    <button class="btn btn-outline" onclick="prevStep(3)">← Назад</button>
+                    <button class="btn btn-primary" onclick="nextStep(5)">Далее →</button>
+                </div>
+            </div>
+
+            <!-- ШАГ 5 -->
+            <div class="step-panel" id="step5">
+                <h2>📥 Шаг 5. Завершение и Экспорт</h2>
+                <div class="form-group"><label for="conclusion">Заключение по работе</label><textarea id="conclusion"></textarea></div>
+                <div class="form-group"><label for="contribution">Личный вклад участников</label><textarea id="contribution"></textarea></div>
+                <div class="form-group"><label for="references">Список источников (каждый с новой строки)</label><textarea id="references"></textarea></div>
+                <div class="btn-row" style="justify-content: space-between; align-items: center; margin-top: 2rem;">
+                    <button class="btn btn-outline" onclick="prevStep(4)">← Назад</button>
+                    <button class="btn btn-success" onclick="downloadDoc()">📥 Скачать в Word (.doc)</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>🍯 Улей — помогаем строить проекты · <a href="https://t.me/ВАША_ССЫЛКА" target="_blank">Telegram-чат</a> · <a href="privacy.html">Политика конфиденциальности</a></p>
+    </footer>
+
+    <script>
+        const fields = ['direction', 'topic', 'fio', 'classSchool', 'supervisor', 'cityYear', 'problem', 'goal', 'tasks', 'hypothesis', 't11', 't12', 't13', 't14', 't15', 't16', 't17', 't18', 't19', 't110', 't21', 't22', 't31', 't32', 'conclusion', 'contribution', 'references'];
+        
+        function loadData() {
+            fields.forEach(id => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                const saved = localStorage.getItem('workshop_' + id);
+                if (saved !== null) el.value = saved;
+                el.addEventListener('input', () => localStorage.setItem('workshop_' + id, el.value));
+            });
+        }
+
+        function showStep(step) {
+            document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+            document.getElementById('step' + step).classList.add('active');
+            document.querySelectorAll('.progress-steps li').forEach(li => {
+                const s = parseInt(li.dataset.step);
+                li.classList.remove('active', 'done');
+                if (s < step) li.classList.add('done');
+                if (s === step) li.classList.add('active');
+            });
+            window.scrollTo({ top: 150, behavior: 'smooth' });
+        }
+
+        function nextStep(step) { showStep(step); }
+        function prevStep(step) { showStep(step); }
+
+        function downloadDoc() {
+            try {
+                const getVal = (id, defaultText = '[Текст не заполнен]') => {
+                    const val = document.getElementById(id).value.trim();
+                    return val || defaultText;
+                };
+                
+                const direction = getVal('direction', 'Направление не выбрано');
+                const rawTopic = document.getElementById('topic').value.trim();
+                const topic = rawTopic ? rawTopic.toUpperCase() : 'НАЗВАНИЕ ПРОЕКТА';
+                const fio = getVal('fio', 'ФИО');
+                const classSchool = getVal('classSchool', 'Класс, учреждение');
+                const supervisor = getVal('supervisor', 'ФИО руководителя');
+                const cityYear = getVal('cityYear', 'Город, год');
+                
+                const problem = getVal('problem');
+                const goal = getVal('goal');
+                const hypothesis = getVal('hypothesis');
+                const tasksText = getVal('tasks', '');
+                const tasksArr = tasksText ? tasksText.split('\n').filter(t => t.trim()) : ['[Задачи не заполнены]'];
+                
+                const t11 = getVal('t11');
+                const t12 = getVal('t12');
+                const t13 = getVal('t13');
+                const t14 = getVal('t14');
+                const t15 = getVal('t15');
+                const t16 = document.getElementById('t16').value.trim() || `Проект носит название «${rawTopic || 'Название проекта'}».`;
+                const t17 = getVal('t17');
+                const t18 = getVal('t18');
+                const t19 = getVal('t19');
+                const t110 = getVal('t110');
+                const t21 = getVal('t21');
+                const t22 = getVal('t22');
+                const t31 = getVal('t31');
+                const t32 = getVal('t32');
+                const conclusion = getVal('conclusion');
+                const contribution = getVal('contribution');
+                const refsText = getVal('references', '');
+                const refsArr = refsText ? refsText.split('\n').filter(r => r.trim()) : ['[Список источников не заполнен]'];
+
+                let html = `
+                <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
+                <head>
+                    <meta charset="utf-8">
+                    <title>${topic}</title>
+                    <!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom></w:WordDocument></xml><![endif]-->
+                    <style>
+                        @page { size: A4; margin: 2cm 1.5cm 2cm 3cm; mso-page-orientation: portrait; }
+                        body { font-family: 'Times New Roman', serif; font-size: 14pt; line-height: 1.5; color: black; }
+                        p { text-indent: 1.25cm; margin: 0 0 10px 0; text-align: justify; }
+                        h1 { font-size: 16pt; font-weight: bold; text-align: center; text-transform: uppercase; page-break-before: always; margin: 0 0 15px 0; }
+                        h2 { font-size: 14pt; font-weight: bold; text-align: center; margin: 15px 0 10px 0; }
+                        .center { text-align: center; text-indent: 0; }
+                        .no-indent { text-indent: 0; }
+                        ul, ol { margin-left: 1.25cm; }
+                        li { font-family: 'Times New Roman', serif; font-size: 14pt; line-height: 1.5; text-align: justify; }
+                    </style>
+                </head>
+                <body>
+                `;
+
+                // ТИТУЛЬНЫЙ ЛИСТ
+                html += `<div style="text-align: center; text-indent: 0; margin-top: 2cm;">`;
+                html += `<p class="no-indent">Автономная некоммерческая организация</p>`;
+                html += `<p class="no-indent">«Казанский открытый университет талантов 2.0»</p>`;
+                html += `<br><br><br>`;
+                html += `<p class="no-indent">Международный конкурс научно-технологических проектов</p>`;
+                html += `<p class="no-indent">«Большие вызовы»</p>`;
+                html += `<br><br><br>`;
+                html += `<p class="no-indent">Направление «${direction}»</p>`;
+                html += `</div>`;
+                
+                html += `<div style="text-align: center; text-indent: 0; margin-top: 4cm; margin-bottom: 4cm;">`;
+                html += `<p class="no-indent" style="font-size: 16pt; font-weight: bold;">Исследовательская работа</p>`;
+                html += `<p class="no-indent" style="font-size: 18pt; font-weight: bold;">«${topic}»</p>`;
+                html += `</div>`;
+                
+                html += `<div style="text-align: right; text-indent: 0; margin-top: 5cm;">`;
+                html += `<p class="no-indent">Выполнил(а): ${classSchool},<br>${fio}</p>`;
+                html += `<br><br>`;
+                html += `<p class="no-indent">Научные руководители: ${supervisor}</p>`;
+                html += `<br><br><br><br>`;
+                html += `<p class="no-indent" style="text-align: center;">${cityYear}</p>`;
+                html += `</div>`;
+                
+                html += `<div style="page-break-after: always;"></div>`;
+
+                // СОДЕРЖАНИЕ
+                html += `<h1 style="page-break-before: avoid;">Содержание</h1>`;
+                html += `<div style="text-indent: 0;">`;
+                html += `<p class="no-indent">Введение........................................................................................................................................3</p>`;
+                html += `<p class="no-indent">ГЛАВА I. ТЕОРЕТИЧЕСКАЯ ЧАСТЬ...........................................................................4</p>`;
+                html += `<p class="no-indent" style="margin-left: 1cm;">1.1 Целевая аудитория..................................................................................................4</p>`;
+                html += `<p class="no-indent" style="margin-left: 1cm;">1.2 Необходимый функционал....................................................................................4</p>`;
+                html += `<p class="no-indent" style="margin-left: 1cm;">1.3 Анализ существующих исследований................................................................5</p>`;
+                html += `<p class="no-indent" style="margin-left: 1cm;">1.4 План реализации исследования..........................................................................5</p>`;
+                html += `<p class="no-indent" style="margin-left: 1cm;">1.5 Используемые ресурсы........................................................................................6</p>`;
+                html += `<p class="no-indent" style="margin-left: 1cm;">1.6 Название вашего проекта......................................................................................6</p>`;
+                html += `<p class="no-indent" style="margin-left: 1cm;">1.7 Возможные аналоги..............................................................................................6</p>`;
+                html += `<p class="no-indent" style="margin-left: 1cm;">1.8 Сравнительная таблица аналогов........................................................................7</p>`;
+                html += `<p class="no-indent" style="margin-left: 1cm;">1.9 Возможные партнёры...........................................................................................7</p>`;
+                html += `<p class="no-indent" style="margin-left: 1cm;">1.10 MVP - Название вашего проекта.......................................................................8</p>`;
+                html += `<p class="no-indent">ГЛАВА II. МАТЕРИАЛЫ И МЕТОДЫ...........................................................................9</p>`;
+                html += `<p class="no-indent" style="margin-left: 1cm;">2.1 Методика проведения исследования..................................................................9</p>`;
+                html += `<p class="no-indent" style="margin-left: 1cm;">2.2 Статистическая обработка данных.....................................................................10</p>`;
+                html += `<p class="no-indent">ГЛАВА III. РЕЗУЛЬТАТЫ И ОБСУЖДЕНИЕ............................................................11</p>`;
+                html += `<p class="no-indent" style="margin-left: 1cm;">3.1 Результаты исследования....................................................................................11</p>`;
+                html += `<p class="no-indent" style="margin-left: 1cm;">3.2 Сравнение полученных результатов..................................................................12</p>`;
+                html += `<p class="no-indent">Заключение по работе...................................................................................................13</p>`;
+                html += `<p class="no-indent">Личный вклад участников............................................................................................14</p>`;
+                html += `<p class="no-indent">Список использованных источников.........................................................................15</p>`;
+                html += `</div>`;
+
+                // ВВЕДЕНИЕ
+                html += `<h1>Введение</h1>`;
+                html += `<p><strong>Актуальность проблемы.</strong> ${problem}</p>`;
+                html += `<p><strong>Цель работы:</strong> ${goal}</p>`;
+                html += `<p><strong>Гипотеза:</strong> ${hypothesis}</p>`;
+                html += `<p><strong>Задачи:</strong></p>`;
+                html += `<ol>`;
+                tasksArr.forEach(t => { html += `<li>${t}</li>`; });
+                html += `</ol>`;
+
+                // ГЛАВА I
+                html += `<h1>ГЛАВА I. ТЕОРЕТИЧЕСКАЯ ЧАСТЬ</h1>`;
+                html += `<h2>1.1 Целевая аудитория</h2><p>${t11}</p>`;
+                html += `<h2>1.2 Необходимый функционал</h2><p>${t12}</p>`;
+                html += `<h2>1.3 Анализ существующих исследований</h2><p>${t13}</p>`;
+                html += `<h2>1.4 План реализации исследования</h2><p>${t14}</p>`;
+                html += `<h2>1.5 Используемые ресурсы и способы их привлечения</h2><p>${t15}</p>`;
+                html += `<h2>1.6 Название вашего проекта</h2><p>${t16}</p>`;
+                html += `<h2>1.7 Возможные аналоги</h2><p>${t17}</p>`;
+                html += `<h2>1.8 Сравнительная таблица аналогов с указанием преимуществ предлагаемого решения</h2><p>${t18}</p>`;
+                html += `<h2>1.9 Возможные партнёры</h2><p>${t19}</p>`;
+                html += `<h2>1.10 MVP - Название вашего проекта</h2><p>${t110}</p>`;
+
+                // ГЛАВА II
+                html += `<h1>ГЛАВА II. МАТЕРИАЛЫ И МЕТОДЫ</h1>`;
+                html += `<h2>2.1 Методика проведения исследования</h2><p>${t21}</p>`;
+                html += `<h2>2.2 Статистическая обработка данных</h2><p>${t22}</p>`;
+
+                // ГЛАВА III
+                html += `<h1>ГЛАВА III. РЕЗУЛЬТАТЫ И ОБСУЖДЕНИЕ</h1>`;
+                html += `<h2>3.1 Результаты исследования</h2><p>${t31}</p>`;
+                html += `<h2>3.2 Сравнение полученных результатов</h2><p>${t32}</p>`;
+
+                // ЗАКЛЮЧЕНИЕ И ВКЛАД
+                html += `<h1>Заключение по работе</h1><p>${conclusion}</p>`;
+                html += `<h1>Личный вклад участников</h1><p>${contribution}</p>`;
+
+                // ИСТОЧНИКИ
+                html += `<h1>Список использованных источников</h1>`;
+                refsArr.forEach(r => { html += `<p class="no-indent" style="text-align: left;">${r}</p>`; });
+
+                html += `</body></html>`;
+
+                const blob = new Blob(['\ufeff', html], { type: 'application/msword;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${(rawTopic || 'Проект').replace(/[^a-zA-Zа-яА-Я0-9\s]/g, '').trim() || 'Проект'}.doc`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            } catch (error) {
+                console.error(error);
+                alert("Произошла ошибка. Попробуйте использовать браузер Chrome.");
+            }
+        }
+
+        (function() {
+            const user = JSON.parse(localStorage.getItem('uliy_user') || 'null');
+            const nav = document.querySelector('.nav');
+            if (!nav) return;
+            const loginBtn = document.getElementById('navLogin');
+            if (user) {
+                if (loginBtn) loginBtn.style.display = 'none';
+                const userLi = document.createElement('li');
+                userLi.innerHTML = `<a href="profile.html" style="display:flex;align-items:center;gap:8px;background:var(--honey-light);padding:0.4rem 1rem;border-radius:25px;font-weight:600;font-size:0.95rem;color:var(--choco);"><span>${user.avatar || '🐝'}</span> ${user.name || 'Пчеловод'}</a>`;
+                nav.appendChild(userLi);
+                const logoutLi = document.createElement('li');
+                logoutLi.innerHTML = `<a href="#" onclick="logout()" style="color:#a0522d;">Выйти</a>`;
+                nav.appendChild(logoutLi);
+            }
+        })();
+        function logout() {
+            if (confirm('Выйти из профиля?')) {
+                localStorage.removeItem('uliy_user');
+                window.location.href = 'index.html';
+            }
+        }
+
+        loadData();
+    </script>
+</body>
+</html>

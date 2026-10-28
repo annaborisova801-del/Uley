@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Личный кабинет — Улей</title>
+    <style>
+        :root {
+            --choco: #3e1e00; --cream: #fdf0d5; --honey: #e6a817; --honey-light: #f7e1b5;
+            --white: #fffcf7; --shadow: 0 8px 24px rgba(62, 30, 0, 0.10); --radius: 24px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Georgia', 'Times New Roman', serif; background-color: var(--cream);
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23e6a817' fill-opacity='0.06'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            color: var(--choco); line-height: 1.6; min-height: 100vh; display: flex; flex-direction: column;
+        }
+        .header {
+            background: var(--white); padding: 1rem 2.5rem; display: flex; align-items: center;
+            justify-content: space-between; box-shadow: 0 2px 12px rgba(62, 30, 0, 0.06);
+            position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--honey-light);
+        }
+        .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--choco); font-size: 1.8rem; font-weight: 700; }
+        .logo-img { width: 45px; height: 45px; object-fit: contain; }
+        .nav { display: flex; gap: 1.5rem; list-style: none; align-items: center; }
+        .nav a { text-decoration: none; color: var(--choco); font-weight: 500; padding: 0.4rem 0.8rem; border-radius: 20px; transition: background 0.2s; font-size: 0.95rem; }
+        .nav a:hover, .nav a.active { background: var(--honey-light); }
+        .user-badge { display: flex; align-items: center; gap: 8px; background: var(--honey-light); padding: 0.4rem 1rem; border-radius: 25px; font-weight: 600; font-size: 0.9rem; }
+        .btn-logout { background: transparent; border: 2px solid var(--honey); color: var(--choco); padding: 0.4rem 1rem; border-radius: 20px; cursor: pointer; font-weight: 600; font-size: 0.85rem; transition: background 0.2s; font-family: inherit; }
+        .btn-logout:hover { background: #ffcc80; }
+
+        .breadcrumbs { padding: 1.5rem 2.5rem 0; font-size: 0.95rem; color: #7b624a; }
+        .breadcrumbs a { color: var(--choco); text-decoration: none; font-weight: 500; }
+
+        .container { max-width: 900px; margin: 2rem auto; padding: 0 2rem; flex: 1; }
+
+        .profile-header {
+            background: var(--white); border-radius: var(--radius); padding: 2rem;
+            box-shadow: var(--shadow); display: flex; align-items: center;
+            gap: 1.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; border: 1px solid var(--honey-light);
+        }
+        .profile-avatar { font-size: 4rem; background: var(--cream); width: 90px; height: 90px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .profile-info h1 { font-size: 1.8rem; }
+        .profile-info .role-badge { display: inline-block; background: var(--honey); color: var(--white); padding: 0.2rem 0.8rem; border-radius: 12px; font-size: 0.85rem; font-weight: 600; margin-top: 0.3rem; }
+
+        .tabs { display: flex; gap: 0.3rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+        .tab-btn { background: var(--white); border: 1px solid var(--honey-light); padding: 0.7rem 1.3rem; border-radius: 20px; font-weight: 600; cursor: pointer; font-size: 0.9rem; color: var(--choco); transition: all 0.2s; font-family: inherit; }
+        .tab-btn:hover { background: var(--honey-light); }
+        .tab-btn.active { background: var(--honey); color: var(--white); border-color: var(--honey); }
+
+        .tab-panel { display: none; background: var(--white); border-radius: var(--radius); padding: 2rem; box-shadow: var(--shadow); border: 1px solid var(--honey-light); }
+        .tab-panel.active { display: block; }
+        .tab-panel h2 { font-size: 1.4rem; margin-bottom: 1rem; }
+
+        .honey-progress { display: flex; gap: 0.8rem; flex-wrap: wrap; margin: 1rem 0; }
+        .honey-cell { width: 60px; height: 68px; clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); background: #e0d0c0; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; text-align: center; transition: all 0.3s; }
+        .honey-cell.filled { background: var(--honey); color: var(--white); }
+
+        .project-card { background: var(--cream); border-radius: 14px; padding: 1.2rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; border: 1px solid var(--honey-light); }
+        .project-card .title { font-weight: 700; font-size: 1.1rem; }
+        .project-card .meta { font-size: 0.8rem; color: #7b624a; }
+        .project-card .status { padding: 0.3rem 0.8rem; border-radius: 12px; font-size: 0.8rem; font-weight: 600; }
+        .status-draft { background: #fff3cd; color: #856404; }
+
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 0.3rem; font-size: 0.9rem; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 0.7rem 1rem; border: 2px solid var(--honey-light); border-radius: 12px; font-size: 0.95rem; font-family: inherit; background: var(--white); color: var(--choco); transition: border-color 0.2s; resize: vertical; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: var(--honey); }
+        
+        .btn-save { background: var(--honey); color: var(--white); border: none; padding: 0.7rem 2rem; border-radius: 25px; font-weight: 700; cursor: pointer; font-size: 1rem; transition: all 0.2s; font-family: inherit; }
+        .btn-save:hover { background: #d49a0f; }
+
+        .empty-state { text-align: center; padding: 2rem; color: #a08972; }
+        .empty-state .icon { font-size: 3rem; margin-bottom: 0.8rem; }
+
+        .footer { background: var(--choco); color: var(--cream); text-align: center; padding: 1.5rem; margin-top: auto; font-size: 0.85rem; }
+        .footer a { color: var(--honey); text-decoration: underline; }
+
+        @media (max-width: 600px) {
+            .header { padding: 1rem; }
+            .nav { gap: 0.8rem; }
+            .container { padding: 0 1rem; }
+            .profile-header { flex-direction: column; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="index.html" class="logo"><img src="logoul.png" alt="Улей" class="logo-img">Улей</a>
+        <ul class="nav">
+            <li><a href="directions.html">Направления</a></li>
+            <li><a href="workshop.html">Мастерская</a></li>
+            <li><a href="library.html">Библиотека</a></li>
+            <li><a href="community.html">Наставники</a></li>
+            <li><span class="user-badge" id="userBadge">🐝 Ученик</span></li>
+            <li><button class="btn-logout" onclick="logout()">Выйти</button></li>
+        </ul>
+    </header>
+
+    <div class="breadcrumbs"><a href="index.html">Главная</a> → Личный кабинет</div>
+
+    <div class="container">
+        <div class="profile-header">
+            <div class="profile-avatar" id="profileAvatar">🐝</div>
+            <div class="profile-info">
+                <h1 id="profileName">Пчеловод</h1>
+                <span class="role-badge" id="profileRole">🐝 Ученик</span>
+                <p style="color:#7b624a; font-size:0.9rem; margin-top:0.3rem;" id="profileSchool">Школа не указана</p>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('progress')">🍯 Прогресс</button>
+            <button class="tab-btn" onclick="switchTab('projects')">📁 Проекты</button>
+            <button class="tab-btn" onclick="switchTab('achievements')">⭐ Достижения</button>
+            <button class="tab-btn" onclick="switchTab('settings')">⚙️ Настройки</button>
+        </div>
+
+        <div class="tab-panel active" id="tab-progress">
+            <h2>🍯 Медовая карта</h2>
+            <p style="color:#7b624a; margin-bottom:1rem;">Каждая сота — шаг твоего проекта. Заполни все — и собери полный горшочек мёда!</p>
+            <div class="honey-progress" id="honeyMap">
+                <div class="honey-cell" title="Выбрано направление">Направ-<br>ление</div>
+                <div class="honey-cell" title="Сформулирована проблема">Проб-<br>лема</div>
+                <div class="honey-cell" title="Поставлена цель">Цель</div>
+                <div class="honey-cell" title="Сформулирована гипотеза">Гипо-<br>теза</div>
+                <div class="honey-cell" title="Составлен план">План</div>
+                <div class="honey-cell" title="Паспорт скачан">Пас-<br>порт</div>
+                <div class="honey-cell" title="Презентация готова">Презен-<br>тация</div>
+            </div>
+            <p style="margin-top: 1rem; font-weight: 600;" id="progressText">Прогресс: 0 из 7 сот заполнено</p>
+            <a href="workshop.html" class="btn-save" style="display:inline-block; text-decoration:none; margin-top:0.5rem;">🛠️ Продолжить в Мастерской</a>
+        </div>
+
+        <div class="tab-panel" id="tab-projects">
+            <h2>📁 Мои проекты</h2>
+            <div id="projectsList">
+                <div class="empty-state">
+                    <div class="icon">📭</div>
+                    <p>У тебя пока нет проектов.</p>
+                    <a href="workshop.html" class="btn-save" style="display:inline-block; text-decoration:none; margin-top:1rem;">Создать первый проект</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-panel" id="tab-achievements">
+            <h2>⭐ Достижения</h2>
+            <div id="achievementsList">
+                <div class="empty-state">
+                    <div class="icon">🏆</div>
+                    <p>Начни проект, чтобы получить первые достижения!</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-panel" id="tab-settings">
+            <h2>⚙️ Настройки профиля</h2>
+            <form id="settingsForm" onsubmit="saveSettings(event)">
+                <div class="form-group">
+                    <label for="setName">Имя</label>
+                    <input type="text" id="setName" placeholder="Твоё имя">
+                </div>
+                <div class="form-group">
+                    <label for="setSchool">Школа / организация</label>
+                    <input type="text" id="setSchool" placeholder="Например: Школа №42, г. Москва">
+                </div>
+                <div class="form-group">
+                    <label for="setGrade">Класс / курс</label>
+                    <select id="setGrade">
+                        <option value="">Не указан</option>
+                        <option>8 класс</option>
+                        <option>9 класс</option>
+                        <option>10 класс</option>
+                        <option>11 класс</option>
+                        <option>1 курс</option>
+                        <option>2 курс</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="setRole">Роль</label>
+                    <select id="setRole">
+                        <option value="student">🐝 Ученик</option>
+                        <option value="mentor">🧑‍🏫 Наставник</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-save">💾 Сохранить настройки</button>
+            </form>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>🍯 Улей — помогаем строить проекты · <a href="https://t.me/utalents" target="_blank">Telegram-чат</a> · <a href="privacy.html">Политика конфиденциальности</a></p>
+    </footer>
+
+    <script>
+        function loadUserData() {
+            const raw = localStorage.getItem('uliy_user');
+            if (!raw) { window.location.href = 'login.html'; return null; }
+            return JSON.parse(raw);
+        }
+        function loadSettings() {
+            const raw = localStorage.getItem('uliy_settings');
+            return raw ? JSON.parse(raw) : {};
+        }
+        const user = loadUserData();
+
+        function updateProfileUI() {
+            if (!user) return;
+            document.getElementById('profileAvatar').textContent = user.avatar || '🐝';
+            document.getElementById('profileName').textContent = user.name || 'Пчеловод';
+            document.getElementById('profileRole').textContent = user.role === 'mentor' ? '🧑‍🏫 Наставник' : '🐝 Ученик';
+            const settings = loadSettings();
+            document.getElementById('profileSchool').textContent = settings.school || 'Школа не указана';
+            document.getElementById('userBadge').textContent = (user.avatar || '🐝') + ' ' + (user.name || 'Пчеловод');
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
+            document.querySelector(`[onclick="switchTab('${tabName}')"]`).classList.add('active');
+            document.getElementById('tab-' + tabName).classList.add('active');
+            if (tabName === 'progress') updateProgress();
+            if (tabName === 'projects') updateProjects();
+            if (tabName === 'achievements') updateAchievements();
+        }
+
+        function updateProgress() {
+            const fields = ['direction', 'problem', 'topic', 'goal', 'hypothesis', 'stages', 'resources'];
+            let filled = 0;
+            fields.forEach((field, index) => {
+                const value = localStorage.getItem('workshop_' + field);
+                const cell = document.querySelectorAll('.honey-cell')[index];
+                if (value && value.trim()) { cell.classList.add('filled'); filled++; } 
+                else { cell.classList.remove('filled'); }
+            });
+            document.getElementById('progressText').textContent = `Прогресс: ${filled} из 7 сот заполнено`;
+        }
+
+        function updateProjects() {
+            const topic = localStorage.getItem('workshop_topic');
+            const direction = localStorage.getItem('workshop_direction');
+            const container = document.getElementById('projectsList');
+            if (topic && topic.trim()) {
+                container.innerHTML = `
+                    <div class="project-card">
+                        <div>
+                            <div class="title">${topic}</div>
+                            <div class="meta">${direction || 'Направление не выбрано'} • ${new Date().toLocaleDateString('ru-RU')}</div>
+                        </div>
+                        <span class="status status-draft">Черновик</span>
+                        <a href="workshop.html" class="btn-save" style="text-decoration:none; font-size:0.85rem; padding:0.5rem 1.2rem;">Продолжить</a>
+                    </div>
+                `;
+            }
+        }
+
+        function updateAchievements() {
+            const fields = ['direction', 'problem', 'topic', 'goal', 'hypothesis', 'stages', 'resources'];
+            let filled = 0;
+            fields.forEach(f => { if (localStorage.getItem('workshop_' + f)?.trim()) filled++; });
+            const container = document.getElementById('achievementsList');
+            if (filled === 0) return;
+            let achievementsHTML = '<div style="display:flex; flex-wrap:wrap; gap:1rem;">';
+            if (filled >= 1) achievementsHTML += '<div style="background:var(--cream); padding:1rem; border-radius:14px; text-align:center; width:130px; border:1px solid var(--honey-light);"><div style="font-size:2rem;">🌱</div><strong>Первый шаг</strong><p style="font-size:0.8rem;">Начал(а) проект</p></div>';
+            if (filled >= 3) achievementsHTML += '<div style="background:var(--cream); padding:1rem; border-radius:14px; text-align:center; width:130px; border:1px solid var(--honey-light);"><div style="font-size:2rem;">🌸</div><strong>Сбор нектара</strong><p style="font-size:0.8rem;">3 шага пройдено</p></div>';
+            if (filled >= 5) achievementsHTML += '<div style="background:var(--cream); padding:1rem; border-radius:14px; text-align:center; width:130px; border:1px solid var(--honey-light);"><div style="font-size:2rem;">🍯</div><strong>Медовая сота</strong><p style="font-size:0.8rem;">5 шагов пройдено</p></div>';
+            if (filled >= 7) achievementsHTML += '<div style="background:var(--honey); color:var(--white); padding:1rem; border-radius:14px; text-align:center; width:130px;"><div style="font-size:2rem;">👑</div><strong>Королева улья</strong><p style="font-size:0.8rem;">Проект готов!</p></div>';
+            achievementsHTML += '</div>';
+            container.innerHTML = achievementsHTML;
+        }
+
+        function saveSettings(event) {
+            event.preventDefault();
+            const settings = {
+                name: document.getElementById('setName').value.trim(),
+                school: document.getElementById('setSchool').value.trim(),
+                grade: document.getElementById('setGrade').value,
+                role: document.getElementById('setRole').value
+            };
+            localStorage.setItem('uliy_settings', JSON.stringify(settings));
+            if (settings.name) { user.name = settings.name; localStorage.setItem('uliy_user', JSON.stringify(user)); }
+            if (settings.role) { user.role = settings.role; localStorage.setItem('uliy_user', JSON.stringify(user)); }
+            updateProfileUI();
+            alert('✅ Настройки сохранены!');
+        }
+
+        function loadSettingsToForm() {
+            const settings = loadSettings();
+            document.getElementById('setName').value = user?.name || '';
+            document.getElementById('setSchool').value = settings.school || '';
+            document.getElementById('setGrade').value = settings.grade || '';
+            document.getElementById('setRole').value = user?.role || 'student';
+        }
+
+        function logout() {
+            if (confirm('Выйти из профиля? Данные проекта сохранятся в этом браузере.')) {
+                localStorage.removeItem('uliy_user');
+                window.location.href = 'login.html';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (user) { updateProfileUI(); updateProgress(); loadSettingsToForm(); }
+        });
+    </script>
+</body>
+</html>

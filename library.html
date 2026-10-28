@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Библиотека знаний — Улей</title>
+    <style>
+        :root {
+            --choco: #3e1e00; --cream: #fdf0d5; --honey: #e6a817; --honey-light: #f7e1b5;
+            --white: #fffcf7; --shadow: 0 8px 24px rgba(62, 30, 0, 0.10); --radius: 24px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Georgia', 'Times New Roman', serif; background-color: var(--cream);
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23e6a817' fill-opacity='0.06'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            color: var(--choco); line-height: 1.6; min-height: 100vh; display: flex; flex-direction: column;
+        }
+        .header {
+            background: var(--white); padding: 1rem 2.5rem; display: flex; align-items: center;
+            justify-content: space-between; box-shadow: 0 2px 12px rgba(62, 30, 0, 0.06);
+            position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--honey-light);
+        }
+        .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--choco); font-size: 1.8rem; font-weight: 700; }
+        .logo-img { width: 45px; height: 45px; object-fit: contain; }
+        .nav { display: flex; gap: 1.5rem; list-style: none; align-items: center; }
+        .nav a { text-decoration: none; color: var(--choco); font-weight: 500; padding: 0.4rem 0.8rem; border-radius: 20px; transition: background 0.2s; font-size: 0.95rem; }
+        .nav a:hover, .nav a.active { background: var(--honey-light); }
+
+        .breadcrumbs { padding: 1.5rem 2.5rem 0; font-size: 0.95rem; color: #7b624a; }
+        .breadcrumbs a { color: var(--choco); text-decoration: none; font-weight: 500; }
+        
+        .page-header { text-align: center; padding: 2rem 2rem 1.5rem; }
+        .page-header h1 { font-size: 2.2rem; font-weight: 700; color: var(--choco); }
+        .page-header p { color: #7b624a; font-size: 1.1rem; font-style: italic; }
+
+        .sections-grid { display: flex; flex-wrap: wrap; gap: 1.5rem; max-width: 1000px; margin: 0 auto 2rem; padding: 0 2rem; justify-content: center; }
+        .section-card {
+            background: var(--white); border-radius: var(--radius); padding: 2rem 1.8rem; box-shadow: var(--shadow);
+            flex: 1 1 280px; max-width: 320px; text-align: center; transition: transform 0.25s; cursor: pointer;
+            border: 1px solid var(--honey-light); text-decoration: none; color: var(--choco); display: flex; flex-direction: column; align-items: center;
+        }
+        .section-card:hover { transform: translateY(-4px); border-color: var(--honey); }
+        .section-card .section-icon { font-size: 3rem; margin-bottom: 0.8rem; }
+        .section-card h2 { font-size: 1.4rem; margin-bottom: 0.5rem; }
+        .section-card p { font-size: 0.9rem; color: #7b624a; line-height: 1.5; }
+
+        .lessons-container { max-width: 800px; margin: 0 auto 3rem; padding: 0 2rem; }
+        .lesson-group { margin-bottom: 2.5rem; scroll-margin-top: 100px; }
+        .lesson-group h2 { font-size: 1.5rem; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 3px solid var(--honey); display: inline-block; }
+
+        .lesson-accordion { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 0.8rem; overflow: hidden; border: 1px solid var(--honey-light); }
+        .lesson-header { padding: 1.2rem 1.5rem; font-weight: 600; font-size: 1.05rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: background 0.2s; user-select: none; }
+        .lesson-header:hover { background: var(--honey-light); }
+        .lesson-header .arrow { font-size: 1.2rem; transition: transform 0.3s; }
+        .lesson-accordion.open .lesson-header .arrow { transform: rotate(180deg); }
+        .lesson-body { max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.4s ease; padding: 0 1.5rem; background: #fffdf9; font-size: 0.95rem; line-height: 1.7; }
+        .lesson-accordion.open .lesson-body { max-height: 2000px; padding: 1.2rem 1.5rem; }
+        .lesson-body h4 { margin: 1rem 0 0.4rem; color: var(--choco); }
+        .lesson-body ul, .lesson-body ol { padding-left: 1.5rem; margin: 0.5rem 0 1rem; }
+        .lesson-body .highlight-box { background: var(--cream); border-left: 4px solid var(--honey); padding: 1rem; border-radius: 10px; margin: 1rem 0; font-weight: 500; }
+        .btn-apply { display: inline-block; background: var(--honey); color: var(--white); padding: 0.5rem 1.3rem; border-radius: 20px; text-decoration: none; font-weight: 600; font-size: 0.9rem; margin-top: 0.5rem; transition: background 0.2s; }
+        .btn-apply:hover { background: #d49a0f; }
+
+        .footer { background: var(--choco); color: var(--cream); text-align: center; padding: 1.5rem; margin-top: auto; font-size: 0.85rem; }
+        .footer a { color: var(--honey); text-decoration: underline; }
+
+        @media (max-width: 600px) {
+            .header { padding: 1rem; }
+            .nav { gap: 1rem; }
+            .sections-grid { padding: 0 1rem; }
+            .lessons-container { padding: 0 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="index.html" class="logo"><img src="logoul.png" alt="Улей" class="logo-img">Улей</a>
+        <ul class="nav">
+            <li><a href="directions.html">Направления</a></li>
+            <li><a href="workshop.html">Мастерская</a></li>
+            <li><a href="library.html" class="active">Библиотека</a></li>
+            <li><a href="community.html">Наставники</a></li>
+            <li id="navLogin"><a href="login.html" style="font-weight:700; color:#d49a0f;">Войти</a></li>
+        </ul>
+    </header>
+
+    <div class="breadcrumbs"><a href="index.html">Главная</a> → Библиотека знаний</div>
+
+    <div class="page-header">
+        <h1>📚 Библиотека знаний</h1>
+        <p>Занятия, памятки и шаблоны — всё, чтобы создать сильный проект</p>
+    </div>
+
+    <div class="sections-grid">
+        <a href="#section-howto" class="section-card">
+            <span class="section-icon">📖</span><h2>Как создать проект</h2><p>Пошаговые уроки: от идеи до защиты. Научись формулировать проблему, цель и гипотезу.</p>
+        </a>
+        <a href="#section-memos" class="section-card">
+            <span class="section-icon">📋</span><h2>Памятки и чек-листы</h2><p>Краткие шпаргалки по оформлению, структуре презентации и типичным ошибкам.</p>
+        </a>
+        <a href="#section-science" class="section-card">
+            <span class="section-icon">🔬</span><h2>Как работать с наукой</h2><p>Где искать источники, как читать статьи и ссылаться на исследования.</p>
+        </a>
+    </div>
+
+    <div class="lessons-container">
+        <div class="lesson-group" id="section-howto">
+            <h2>📖 Как создать проект</h2>
+            <div class="lesson-accordion">
+                <div class="lesson-header" onclick="toggleLesson(this)">🧭 Как выбрать тему и сформулировать проблему<span class="arrow">▼</span></div>
+                <div class="lesson-body">
+                    <p>Хороший проект начинается с <strong>настоящей проблемы</strong>, а не с абстрактной темы. Вот пошаговая инструкция:</p>
+                    <ol>
+                        <li><strong>Посмотри вокруг.</strong> Что тебя волнует? Экология в твоём городе? Качество воды? Доступность медицины? Выпиши 3–5 тем, которые вызывают эмоции.</li>
+                        <li><strong>Сузь фокус.</strong> «Экология» — слишком широко. «Загрязнение малых рек микропластиком в моём регионе» — уже конкретно.</li>
+                        <li><strong>Проверь актуальность.</strong> Погугли, пишут ли об этом учёные. Зайди на <a href="https://elibrary.ru" target="_blank">eLibrary.ru</a> или <a href="https://scholar.google.com" target="_blank">Google Scholar</a>.</li>
+                        <li><strong>Сформулируй проблему одним предложением.</strong> Например: «Отсутствие доступного метода мониторинга микропластика в реках области».</li>
+                    </ol>
+                    <div class="highlight-box">💡 <strong>Совет:</strong> Хорошая проблема — та, которую можно измерить. Если нельзя посчитать или сравнить — ищи другую формулировку.</div>
+                    <a href="workshop.html" class="btn-apply">🔧 Применить в Мастерской</a>
+                </div>
+            </div>
+            <div class="lesson-accordion">
+                <div class="lesson-header" onclick="toggleLesson(this)">🎯 Как поставить цель и сформулировать гипотезу<span class="arrow">▼</span></div>
+                <div class="lesson-body">
+                    <h4>Цель проекта</h4>
+                    <p>Цель — это <strong>конкретный результат</strong>, который ты хочешь получить. Формулируй через глаголы действия: <strong>Разработать</strong>, <strong>Исследовать</strong>, <strong>Оценить</strong>, <strong>Создать</strong>.</p>
+                    <p><em>Пример:</em> «Разработать портативный датчик для обнаружения микропластика в пробах воды».</p>
+                    <h4>Гипотеза</h4>
+                    <p>Гипотеза — это <strong>предположение</strong>, которое ты проверяешь. Она должна быть: проверяемой, конкретной, связанной с проблемой.</p>
+                    <p><em>Пример:</em> «Если использовать фильтры с ячейкой 0.1 мм, то точность обнаружения микропластика повысится на 20% по сравнению со стандартными фильтрами».</p>
+                    <a href="workshop.html" class="btn-apply">🔧 Применить в Мастерской</a>
+                </div>
+            </div>
+            <div class="lesson-accordion">
+                <div class="lesson-header" onclick="toggleLesson(this)">📅 Как составить план проекта и ничего не забыть<span class="arrow">▼</span></div>
+                <div class="lesson-body">
+                    <p>Стандартный план исследования включает 5 этапов:</p>
+                    <ol>
+                        <li><strong>Подготовительный этап.</strong> Анализ литературы, формулировка проблемы, цели и гипотезы. Определение методов.</li>
+                        <li><strong>Проектировочный этап.</strong> Разработка методики, подготовка оборудования, создание прототипа (если нужно).</li>
+                        <li><strong>Экспериментальный этап.</strong> Сбор данных, проведение опытов, тестирование.</li>
+                        <li><strong>Аналитический этап.</strong> Обработка данных, построение графиков, проверка гипотезы.</li>
+                        <li><strong>Оформительский этап.</strong> Написание текста, создание презентации, подготовка к защите.</li>
+                    </ol>
+                    <div class="highlight-box">⏰ <strong>Лайфхак:</strong> Отведи 30% времени на подготовку, 40% на эксперимент, 30% на оформление. И всегда закладывай запасную неделю на случай форс-мажора.</div>
+                    <a href="workshop.html" class="btn-apply">🔧 Применить в Мастерской</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="lesson-group" id="section-memos">
+            <h2>📋 Памятки и чек-листы</h2>
+            <div class="lesson-accordion">
+                <div class="lesson-header" onclick="toggleLesson(this)">📄 Структура паспорта проекта<span class="arrow">▼</span></div>
+                <div class="lesson-body">
+                    <p>Паспорт проекта — твой главный документ. В нём должны быть:</p>
+                    <ol>
+                        <li><strong>Название проекта</strong> — ёмкое, отражающее суть</li>
+                        <li><strong>Направление</strong> (по классификации «Больших вызовов»)</li>
+                        <li><strong>Проблема</strong> — 1–2 абзаца</li>
+                        <li><strong>Цель</strong> — одно предложение</li>
+                        <li><strong>Гипотеза</strong> (если есть)</li>
+                        <li><strong>Задачи</strong> — 3–5 конкретных шагов</li>
+                        <li><strong>Методы</strong> — что используешь</li>
+                        <li><strong>Ожидаемые результаты</strong></li>
+                        <li><strong>Список литературы</strong> (хотя бы 3–5 источников)</li>
+                    </ol>
+                    <a href="workshop.html" class="btn-apply">🔧 Заполнить паспорт</a>
+                </div>
+            </div>
+            <div class="lesson-accordion">
+                <div class="lesson-header" onclick="toggleLesson(this)">🎤 Чек-лист подготовки к защите<span class="arrow">▼</span></div>
+                <div class="lesson-body">
+                    <ul>
+                        <li>✅ Презентация готова (7–10 слайдов, не больше)</li>
+                        <li>✅ Текст выступления укладывается в регламент (обычно 5–7 минут)</li>
+                        <li>✅ Проведена репетиция перед зеркалом или друзьями</li>
+                        <li>✅ Подготовлены ответы на возможные вопросы</li>
+                        <li>✅ Проверено оборудование (флешка, переходники, зарядка)</li>
+                        <li>✅ Есть раздаточные материалы (если нужно)</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="lesson-accordion">
+                <div class="lesson-header" onclick="toggleLesson(this)">⚠️ Типичные ошибки начинающих<span class="arrow">▼</span></div>
+                <div class="lesson-body">
+                    <ol>
+                        <li><strong>Слишком широкая тема.</strong> «Спасение планеты» — не проект, а лозунг. Сужайте.</li>
+                        <li><strong>Нет измеряемых результатов.</strong> «Улучшить экологию» — а на сколько? В чём измерить?</li>
+                        <li><strong>Нет ссылок на источники.</strong> Даже школьный проект требует научной базы.</li>
+                        <li><strong>Плагиат.</strong> Всегда указывайте, откуда взята информация.</li>
+                        <li><strong>Слишком сложно.</strong> Лучше сделать простой, но работающий прототип, чем грандиозную теорию без практики.</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <div class="lesson-group" id="section-science">
+            <h2>🔬 Как работать с наукой</h2>
+            <div class="lesson-accordion">
+                <div class="lesson-header" onclick="toggleLesson(this)">🔍 Где искать научные источники<span class="arrow">▼</span></div>
+                <div class="lesson-body">
+                    <p>Вот список надёжных баз, открытых для школьников:</p>
+                    <ul>
+                        <li><a href="https://scholar.google.com" target="_blank">Google Scholar</a> — поиск по научным статьям</li>
+                        <li><a href="https://elibrary.ru" target="_blank">eLibrary.ru</a> — российская научная библиотека</li>
+                        <li><a href="https://cyberleninka.ru" target="_blank">КиберЛенинка</a> — бесплатные статьи на русском</li>
+                        <li><a href="https://arxiv.org" target="_blank">arXiv.org</a> — препринты по физике, математике, биологии</li>
+                        <li><a href="https://pubmed.ncbi.nlm.nih.gov" target="_blank">PubMed</a> — медицина и биология</li>
+                    </ul>
+                    <div class="highlight-box">💡 Ищи статьи за последние 5 лет. Наука движется быстро, и данные 20-летней давности могут устареть.</div>
+                </div>
+            </div>
+            <div class="lesson-accordion">
+                <div class="lesson-header" onclick="toggleLesson(this)">📖 Как читать научную статью (и не уснуть)<span class="arrow">▼</span></div>
+                <div class="lesson-body">
+                    <p>Не обязательно читать всё подряд. Двигайся по схеме:</p>
+                    <ol>
+                        <li><strong>Заголовок и аннотация (abstract).</strong> Понятна ли тема? Интересно ли тебе? Если нет — закрывай.</li>
+                        <li><strong>Выводы (conclusion).</strong> Что в итоге получили авторы? Это поможет понять, стоит ли читать дальше.</li>
+                        <li><strong>Графики и таблицы.</strong> Часто вся суть в картинках.</li>
+                        <li><strong>Методы.</strong> Как именно проводили исследование? Можно ли это повторить?</li>
+                        <li><strong>Введение и обзор литературы.</strong> Это для углублённого погружения — читай, если тема очень заинтересовала.</li>
+                    </ol>
+                </div>
+            </div>
+            <div class="lesson-accordion">
+                <div class="lesson-header" onclick="toggleLesson(this)">✍️ Как оформить ссылки и не получить плагиат<span class="arrow">▼</span></div>
+                <div class="lesson-body">
+                    <p>Всегда указывай источник, если берёшь:</p>
+                    <ul>
+                        <li>Чужую идею или гипотезу</li>
+                        <li>Статистику или цифры</li>
+                        <li>Прямую цитату (в кавычках)</li>
+                        <li>Изображение или график</li>
+                    </ul>
+                    <p><strong>Пример оформления (ГОСТ):</strong></p>
+                    <p style="background: #f5f0e8; padding: 0.8rem; border-radius: 8px; font-size: 0.9rem;">Иванов И.И. Микропластик в пресных водоёмах // Экология и жизнь. — 2023. — №5. — С. 12–18.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>🍯 Улей — помогаем строить проекты · <a href="https://t.me/utalents" target="_blank">Telegram-чат</a> · <a href="privacy.html">Политика конфиденциальности</a></p>
+    </footer>
+
+    <script>
+        function toggleLesson(header) {
+            const accordion = header.parentElement;
+            const group = accordion.parentElement;
+            group.querySelectorAll('.lesson-accordion').forEach(item => {
+                if (item !== accordion && item.classList.contains('open')) item.classList.remove('open');
+            });
+            accordion.classList.toggle('open');
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            const firstLesson = document.querySelector('.lesson-accordion');
+            if (firstLesson) firstLesson.classList.add('open');
+        });
+        document.querySelectorAll('.section-card[href^="#"]').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+
+        (function() {
+            const user = JSON.parse(localStorage.getItem('uliy_user') || 'null');
+            const nav = document.querySelector('.nav');
+            if (!nav) return;
+            const loginBtn = document.getElementById('navLogin');
+            if (user) {
+                if (loginBtn) loginBtn.style.display = 'none';
+                const userLi = document.createElement('li');
+                userLi.innerHTML = `<a href="profile.html" style="display:flex;align-items:center;gap:8px;background:var(--honey-light);padding:0.4rem 1rem;border-radius:25px;font-weight:600;font-size:0.95rem;color:var(--choco);"><span>${user.avatar || '🐝'}</span> ${user.name || 'Пчеловод'}</a>`;
+                nav.appendChild(userLi);
+                const logoutLi = document.createElement('li');
+                logoutLi.innerHTML = `<a href="#" onclick="logout()" style="color:#a0522d;">Выйти</a>`;
+                nav.appendChild(logoutLi);
+            }
+        })();
+        function logout() {
+            if (confirm('Выйти из профиля?')) {
+                localStorage.removeItem('uliy_user');
+                window.location.href = 'index.html';
+            }
+        }
+    </script>
+</body>
+</html>
